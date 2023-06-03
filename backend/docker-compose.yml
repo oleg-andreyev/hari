@@ -1,0 +1,22 @@
+version: '3.8'
+
+volumes:
+  elasticsearch:
+
+services:
+  search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      - "discovery.type=single-node"
+      - "bootstrap.memory_lock=true"
+      - 'xpack.security.enabled=false'
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
