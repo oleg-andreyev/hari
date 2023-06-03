@@ -16,6 +16,9 @@ export const Header: FC<any> = (): ReactElement => {
               <NavLink to="/" className="nav-link">
                 Home
               </NavLink>
+              <NavLink to="/resumes" className="nav-link">
+                Resume List
+              </NavLink>
               <NavLink to="/upload" className="nav-link">
                 Upload CV
               </NavLink>
