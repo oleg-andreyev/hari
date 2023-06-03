@@ -1,0 +1,29 @@
+Artemijs Zzazaza
+Latvia
+zzaasdas4@gmail.com
+linkedin.com/in/artemijzzzzz
+Experience
+Senior Javascript Developer
+Emergn
+Nov 2022 - Present (8 months)
+Javascript Developer
+Emergn
+Sep 2018 - Dec 2022 (4 years 4 months)
+Full-stack Web Developer
+1C - ANDI
+Nov 2015 - May 2016 (7 months)
+1C-ANDI is official representative of Bitrix CMS/Framework in Latvia. While working there i participated
+in developing web-shop http://estock.certus.lv . My job was to develop catalog, order basket and order
+logic. Also developed JavaScript sales review system for Lattako (http://www.latakko.lv/) . I used
+Amcharts library and made custom DB Connector to connect to externally hosted MSSQL Database.
+Education
+VIA University College
+2013 - 2017
+VIA University College
+Computer Software Engineering
+Licenses & Certifications
+Building AI and Sustainability Solutions on SAP BTP - SAP
+openSAP
+Skills
+SAP Cloud Platform   •   SAP Workflow   •   SAP Products   •   SAP Fiori   •   SAPUI5   •   OData   •   Mean Stack
+  •   Laravel   •   PHP   •   AngularJS

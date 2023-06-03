@@ -1,0 +1,43 @@
+Vasja Pupkin
+Ulboka street
+Riag, apaps
++7328282828
+tata@data.fdsf
+Objective:
+Highly skilled and motivated Software Engineer with [X] years of experience seeking a challenging position in a dynamic software development company. Committed to delivering innovative and efficient solutions to complex problems.
+Education:
+Bachelor in Computer Science
+RTU
+2012
+Skills:
+- Programming Languages: [List relevant programming languages]
+- Web Development: HTML, CSS, JavaScript, React, Node.js
+- Database Technologies: SQL, MongoDB
+- Software Development Lifecycle (SDLC)
+- Object-Oriented Programming (OOP) principles
+- Version Control Systems: Git
+- Agile Methodologies: Scrum, Kanban
+- Problem-solving and analytical skills
+- Excellent communication and teamwork
+Experience:
+Senior Frontend developer
+Comapny: Emergen
+2020-10 - 2023-2
+- Developed and maintained web applications using React and frameworks.
+- Collaborated with cross-functional teams to gather requirements and design software solutions.
+- Implemented new features and enhancements based on user feedback and business needs.
+- Conducted code reviews and ensured adherence to coding standards.
+- Participated in Agile ceremonies, including daily stand-ups, sprint planning, and retrospectives.
+- Troubleshot and resolved software defects, ensuring timely delivery of bug fixes.
+- Assisted in the deployment and release process of software applications.
+Junior developer
+Atea, Riga
+2018-01 - 2020-09
+- Designed and implemented RESTful APIs to support front-end applications.
+- Worked closely with product managers and UX designers to translate requirements into technical specifications.
+- Optimized database queries and improved overall application performance.
+- Collaborated with QA engineers to develop and execute comprehensive test plans.
+- Conducted thorough unit testing and debugging of software components.
+- Assisted in the training and mentoring of junior developers.
+Certifications:
+- AWS

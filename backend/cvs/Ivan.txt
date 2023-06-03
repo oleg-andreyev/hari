@@ -1,0 +1,76 @@
+Ioan Miha
+Nationality: Latvian Date of birth: 1 Jan 1993
+(+371) 27111335
+Email address: mmssdm@gmail.com
+Address: Vilipa iela 23, LV-103 Riga (Latvia)
+
+About me
+I am working with Java since 2012 and still like that. For these years, I gained a lot of different experience in
+different roles and projects. There were projects where I was the only one memeber responsible for establishing
+new integration with client and where I was working in distributed team. In my work I am focusing on delivering
+efficient solution for the business needs, taking into account long term strategy and urgency. Right now, I am
+looking for challenging work where I can apply my existing experience and notice the result of my work.
+WORK EXPERIENCE
+Lead developer
+Weissenrieder & CO [ Sep 2016 – Current ]
+Location: Latvia, Riga
+Daily activities:
+Analyse and implementation of new features
+Providing complexity estimates to business
+Align developement with long term strategy
+Achievements:
+Reduced time to production of code changes:
+split application into independent modules and introduced incremental build
+containerized application artifact and standardized deployment
+Eestablished Capex Management system integration with client ERP system. In scope of this were:
+negotiated technical requirements with client
+defined technical specification for integration
+Volunteered to leed scaling of a development team. From 5 developers to 15
+Technologies: Java 11, SpringBoot2, MS SQL, AWS, Docker, Terraform, Angular7, GIT
+Software developer
+Ambita [ Aug 2014 – Sep 2016 ]
+Location: Latvia, Riga
+﻿Daily activities:
+Developing new features in electronic conveyancing system
+Improvement of existing functionality in digital signing system
+Elimination of a technical debt in legacy system
+Achievements:
+Implemented state sharing logic for digital signing system to make it highly available system
+Proceed migration of legacy system from IBM DB2 to PostgreSQL
+Technologies: Java 8, Scala, Spring, Hibernate, Maven, Play 2.x, PostgreSQL, AWS, Angular 2, GIT
+
+
+English
+LISTENING C1 READING C1 WRITING C1
+SPOKEN PRODUCTION C1 SPOKEN INTERACTION C1
+Russian
+LISTENING C2 READING C2 WRITING C1
+SPOKEN PRODUCTION C2 SPOKEN INTERACTION C2
+Software developer
+Tieto [ Oct 2012 – Aug 2014 ]
+Location: Latvia, Riga
+﻿Daily activities:
+Maintanance and development of B2B shop
+Integration with third party systems
+Server configuration
+Technologies: Spring, Hibernate, MySQL, JQuery, SVN, Linux, GIT
+EDUCATION AND TRAINING
+AWS Cloud Practitioner - Amazon
+[ 2021 ]
+Workplace coaching - Erickson Coaching International
+[ 2020 ]
+Functional Programming Principles in Scala - Coursera
+[ 2014 ]
+Java SE 6 Programmer Certified Professional Exam - Orcale
+[ 2013 ]
+Bachelor of Computer Science. “Application of the Neural Network to E-commerce Solutions”
+Riga Techincal University [ 2010 – 2013 ]
+Secondary education
+Riga secondary school no.75 [ 1998 – 2010 ]
+LANGUAGE SKILLS
+Mother tongue(s): Latvian
+Other language(s):
+DIGITAL SKILLS
+My Digital Skills
+AWS / Java / Docker / Angular / Spring / SpringBoot / MS SQL / Terraform / Linux / Git / Hibernate /
+MySQL / PostgreSQL / Maven / Scala / Phyton / Play Framework

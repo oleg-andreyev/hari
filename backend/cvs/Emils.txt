@@ -1,0 +1,89 @@
+EMĪLS PLAPLAPL
+jun 12th, 1994
+Latvia, Riga
+emils@asasd.lv | www.asdsada.lv
+
+As a teenager I developed interest in web technologies, I learned to create websites with HTML, CSS,
+PHP and MySQL. Later on, I had to leave my hobby, but the passion was still there, so I returned to
+coding, and it has been the right decision, because every day I work with pure pleasure.
+I started working professionally as a Javascript developer, mainly frontend, developed my skills with
+Javascript, jQuery, later started experimenting with different frontend frameworks, like Angular, React,
+Vue. Currently actively working with Node JS and React, MySQL and MongoDB, and playing around with
+Go, Event Sourcing, CQRS, Messaging Queues.
+WORK EXPERIENCE
+OCTOBER 2022 – CURRENT
+SENIOR JAVASCRIPT DEVELOPER, CUSTOMER.IO
+Working on Data Squad, that means dealing with loads of data in the UI, making easy to use and
+highly functional UX while maintaining good performance. Doing key parts for new Features.
+Helping with tech debt cleanup and upgrading Ember up to date and best practices.
+Learning Go lang, making small API changes and digging into overall app architecture to expand
+my knowledge.
+Every day work includes working with ember (& libraries), svg, cypress, postman, mysql, go, mq.
+FEBRUARY 2022 – CURRENT
+JAVASCRIPT TALENT, TOPTAL [FREELANCE]
+Freelancing in spare time. Accepting mostly React jobs – react, redux. Some gigs also with
+Nodejs/Express as fullstack position.
+JULY 2021 – MAY 2022
+JAVASCRIPT LECTURER, SMARTCOD.EE [FREELANCE]
+Prepare materials with practical demos and assignments for lectures, presentation, leading
+practical work class. Usually, 2-month intensive courses with main auditory of beginners and
+juniors. However, I have worked with experienced developer groups to introduce to new
+concepts. Main topics – javascript, nodejs, html, css, vue, vuex, mysql, react
+JUNE 2019 – SEPTEMBER 2022
+SENIOR JAVASCRIPT DEVELOPER, UBIQUITI LATVIA
+Develop and maintenance main project web UI, for networking management and devices.
+Starting with UI views with tables and forms, moving through state management, custom graphs
+and performance tweaks, going till developing API and relational databases. Every day work
+includes working with react, redux, jest, cypress, nodejs, express, websockets, mysql.
+2
+FEBRUARY 2018 – JUNE 2019
+SENIOR FRONT-END DEVELOPER, MAPON / DRAUGIEM GROUP
+Maintenance and core feature development in main project “Mapon”, includes working with a
+lot of react, redux, sass, google maps, svg, webpack, mysql. Interesting sub-projects – messaging,
+logistics planning, realtime data display.
+On second project “Tachogram”, rewriting legacy web app with react and redux. Developing new
+features and rewriting old. Includes heavy file parsing.
+NOVERMBER 2017 – MAY 2020
+CTO / LEAD JAVASCRIPT DEVELOPER, BUSINESS TRAVEL 365 [STARTUP]
+In charge of application architecture, all technical implementations and developers. Starting with
+internal CRM, large scale forms, public web page with landing pages, microservice architecture.
+Daily work included working with nodejs, mysql, redis, rabbitmq, javascript, react, redux, vue.
+AUGUST 2017 – FEBRUARY 2018
+FRONT-END DEVELOPER, WPBAKERY / VISUAL COMPOSER
+Maintenance of existing product. Website builder for Wordpress, a plugin built with React,
+custom storage library. Result content rendered with php as wordpress page. A lot of different
+UI elements, made to easy the process of creating elements on page. Together with project lead,
+refactored core parts of the builder, with vanilla js. Project was very modular, and a lot of parts
+were easy to replace with different. While working here, encountered different things: vanilla js,
+react, webpack, sass, less, php, laravel, mysql, jest.
+OCTOBER 2015 – JULY 2017
+FRONT-END DEVELOPER, DYNATECH
+Started as Javascript developer, worked with vanilla js and jQuery. Different forms, sliders, ajax
+calls. Later started working on Angular projects, some existing, some from scratch. Starting from
+September 2016 worked on project with React, page builder with a lot of customizable elements.
+While working on this project, developed love for vanilla js and found big interest in Node. Also
+worked with sass, gulp, webpack, redux, php, jest, enzyme.
+APRIL 2015 – SEPTEMBER 2015
+SENIOR BARTENDER, “EGLE”
+APRIL 2012 – APRIL 2015
+BARTENDER, “EGLE”
+EDUCATION
+SEPTEMBER 2018 - 2020
+UNFINISHED BACHELOR’S DEGREE, RIGA TECHNICAL UNIVERCITY
+Computer science, automation, algorithms, Java and C language basics, 3D graphics. Had to leave
+at final semester.
+MAY 2011
+SECONDARY EDUCATION, RIGA’S IMANTAS SECONDARY SCHOOL
+3
+SKILLS
+• Languages: Latvian, English, Russian
+• Driver’s license for cars, motorcycle, lorry.
+• Strong known: JS (vanilla), React, Redux,
+Angular v1, Node (vanilla, Express, Adonis),
+MySQL, Git, API, REST, WebSockets
+• Good knowledge: Webpack, Event Sourcing,
+MongoDB, Ember JS, svg
+• Decent knowledge: PHP, Vue, CQRS,
+RabbitMQ, Go
+• Experimented with: Kafka, Docker, NATS,
+GraphQL
