@@ -52,16 +52,16 @@ app.get('/list', cors(corsOptions), function (req, res) {
     elasticsearch.search({
         index: 'resumes',
         query: {
-            match_all: {},
+            // match_all: {},
             // query_string: {
             //     query: 'react AND 2 year',
             //     fuzziness: 2,
             // }
-            // match: {
-            //     summary: {
-            //         query: 'typescript 2 years'
-            //     }
-            // }
+            match: {
+                summary: {
+                    query: 'typescript 2 years'
+                }
+            }
         }
     }).then((result) => {
         let rows = [];
@@ -89,18 +89,6 @@ app.post('/upload-resume', cors(corsOptions), function (req, res) {
                 return a + parseInt(b.duration_in_months);
             }, 0)
             content.total_experience = total_experience;
-
-            // handle wrong duration_in_months
-            const experiences = [];
-            content.experience.forEach((experience) => {
-                try {
-                    new Date(experience.duration_in_months)
-                } catch (e) {
-                    experience.duration_in_months = 0;
-                }
-                experiences.push(experience)
-            });
-            content.experience = experiences;
 
             stmt.run(
                 req.body.data,
