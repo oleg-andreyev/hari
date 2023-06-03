@@ -3,7 +3,15 @@ const app = express()
 const port = 3000
 const dotenv = require('dotenv');
 const fs = require("fs");
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database(`${__dirname}/var/database.db`);
+
+
 const bodyParser = require("body-parser");
+
+db.run('CREATE TABLE IF NOT EXISTS `resume` (raw_data TEXT)', function (err) {
+    console.log(err);
+});
 
 ['.env', '.env.local'].forEach((file) => {
     if (fs.existsSync(`${__dirname}/${file}`)) {
@@ -65,7 +73,7 @@ app.post('/upload-resume',  function (req, res) {
                 content: `You are "Hari" and you HR assistant. 
 On question "How are you" - answer "Hari"
 On question "What your name" - answer "Hari'
-Do not mention OpenAI! `
+Do not mention OpenAI!`
             },
             {
                 role: 'user',
