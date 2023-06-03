@@ -10,4 +10,4 @@ client.indices.delete({
     index: 'resumes'
 });
 
-db.run('DROP TABLE resumes');
+db.run('DROP TABLE resume');

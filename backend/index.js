@@ -62,7 +62,8 @@ app.get('/list', cors(corsOptions), function (req, res) {
             //         query: 'typescript 2 years'
             //     }
             // }
-        }
+        },
+        size: 100
     }).then((result) => {
         let rows = [];
         result.hits.hits.forEach((hit) => {
@@ -109,12 +110,15 @@ app.post('/upload-resume', cors(corsOptions), function (req, res) {
                 JSON.stringify(content.experience),
                 total_experience,
                 function () {
-                    elasticsearch.index({
-                        index: 'resumes',
-                        document: content
-                    }).then(res => console.log(res))
+                    db.get('SELECT last_insert_rowid()', function (err, result) {
+                        content.resume_id = result['last_insert_rowid()'];
+                        elasticsearch.index({
+                            index: 'resumes',
+                            document: content
+                        }).then(res => console.log(res))
 
-                    res.json(content);
+                        res.json(content);
+                    })
                 }
             );
         })
