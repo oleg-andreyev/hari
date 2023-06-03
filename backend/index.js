@@ -1,10 +1,10 @@
-
 const openai = require('openai')
 const express = require('express')
 const app = express()
 const port = 3000
 const dotenv = require('dotenv');
 const fs = require("fs");
+const bodyParser = require("body-parser");
 
 ['.env', '.env.local'].forEach((file) => {
     if (fs.existsSync(file)) {
@@ -14,6 +14,8 @@ const fs = require("fs");
         });
     }
 })
+
+app.use( bodyParser.json() );
 
 app.get('/', async (req, res) => {
     const {Configuration, OpenAIApi} = require("openai");
@@ -33,9 +35,14 @@ app.get('/', async (req, res) => {
             res.send(response.data)
         })
         .catch((e) => {
-            res.send('Error'+e.message)
+            res.send('Error' + e.message)
         })
-})
+});
+
+
+app.post('/upload-resume',  function (req, res) {
+    res.send('Request: ' + JSON.stringify(req.body))
+});
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
