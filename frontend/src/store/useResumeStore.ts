@@ -25,7 +25,6 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
       });
       return resume;
     } catch (err: any) {
-      debugger;
       console.warn(err);
       return {
         summary: "test",
