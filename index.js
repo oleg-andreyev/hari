@@ -3,17 +3,38 @@ const openai = require('openai')
 const express = require('express')
 const app = express()
 const port = 3000
+const dotenv = require('dotenv');
+const fs = require("fs");
 
-const configuration = new openai.Configuration({
-    organization: "YOUR_ORG_ID",
-    apiKey: process.env.OPENAI_API_KEY,
-});
+['.env', '.env.local'].forEach((file) => {
+    if (fs.existsSync(file)) {
+        dotenv.config({
+            path: `${__dirname}/${file}`,
+            override: true,
+        });
+    }
+})
 
-const openai = new openai.OpenAIApi (configuration);
-const response = await openai.listEngines();
+app.get('/', async (req, res) => {
+    const {Configuration, OpenAIApi} = require("openai");
+    const configuration = new Configuration({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
+    const openai = new OpenAIApi(configuration);
+    const response = openai.createCompletion({
+        model: "text-davinci-003",
+        prompt: "Say this is a test",
+        temperature: 0,
+        max_tokens: 7,
+    });
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
+    response
+        .then((response) => {
+            res.send(response.data)
+        })
+        .catch((e) => {
+            res.send('Error'+e.message)
+        })
 })
 
 app.listen(port, () => {
