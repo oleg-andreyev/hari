@@ -11,3 +11,10 @@ Provide me keywords for technical position from this Resume
 
 Provide me years of experience from this CV as a list, with only numbers
 
+
+You are a recruiter that hires developers, and you have to evaluate CV and prepare summary, where should be mentioned each point:
+1. name and email
+2. main technology stack
+3. average experience in years at company
+4. latest used technologies
+Summary should be In following format: [1. name and email] has [3. average experience in years at company] years and has main experience in [2. main technology stack]. Latest technologies he used are [4. latest used technologies]

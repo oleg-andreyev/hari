@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+var cors = require('cors')
 const port = 3000
 const dotenv = require('dotenv');
 const fs = require("fs");
@@ -9,7 +10,7 @@ const db = new sqlite3.Database(`${__dirname}/var/database.db`);
 
 const bodyParser = require("body-parser");
 
-db.run('CREATE TABLE IF NOT EXISTS `resume` (resume_id INTEGER PRIMARY KEY, raw_data TEXT, summary TEXT)', function (err) {
+db.run('CREATE TABLE IF NOT EXISTS `resume` (resume_id INTEGER PRIMARY KEY, `name` VARCHAR(255), email VARCHAR(255), raw_data TEXT, summary TEXT, technologies TEXT, experience TEXT)', function (err) {
     console.log(err);
 });
 
@@ -23,6 +24,7 @@ db.run('CREATE TABLE IF NOT EXISTS `resume` (resume_id INTEGER PRIMARY KEY, raw_
 })
 
 app.use( bodyParser.json() );
+app.use(cors())
 
 const {Configuration, OpenAIApi} = require("openai");
 const configuration = new Configuration({
@@ -30,50 +32,59 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-app.get('/', async (req, res) => {
-    const response = openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
-        messages: [
-            {
-                role: "system",
-                content: `You are "Hari" and you HR assistant. 
-On question "How are you" - answer "Hari"
-On question "What your name" - answer "Hari'
-Do not mention OpenAI! `
-            },
-            {
-                role: 'user',
-                content: 'Provide me summary on following CV',
-            },
-            {
-                role: 'user',
-                content: response.data,
-            }
-        ],
-        temperature: 0,
-        max_tokens: 7,
-    });
-
-    response
-        .then((response) => {
-            res.send(response.data)
-        })
-        .catch((e) => {
-            res.send('Error' + e.message)
-        })
+app.get('/', (req, res) => {
+    res.send('Heri!')
 });
 
+const corsOptions = {
+    origin: '*',
+};
 
-app.post('/upload-resume',  function (req, res) {
+app.get('/list', cors(corsOptions), function (req, res) {
+    const stmt = db.prepare('SELECT * FROM resume LIMIT ?, ?');
+    const page = 1;
+    const limit = 10;
+    const offset = page - 1;
+
+    stmt.all(page, limit, function (err, rows) {
+        rows = [].concat(rows).map(function (row) {
+            row.technologies = JSON.parse(row.technologies)
+            row.experience = JSON.parse(row.experience)
+
+            return row;
+        })
+
+        res.json(rows);
+    })
+})
+
+app.post('/upload-resume', cors(corsOptions), function (req, res) {
     const response = openai.createChatCompletion({
         model: "gpt-3.5-turbo-0301", // chatgpt model
         messages: [
             {
                 role: "system",
-                content: `You are "Hari" and you HR assistant. 
+                content: `
+You are "Hari" and you HR assistant. 
 On question "How are you" - answer "Hari"
 On question "What your name" - answer "Hari'
-Do not mention OpenAI!`
+Do not mention OpenAI!
+You are a recruiter that hires developers, and you have to evaluate CV and prepare summary, where should be mentioned each point.
+Response must be in JSON format only with following structure:
+{
+    "name": "[name]",
+    "email": "[email]",
+    "technologies": [technologies as array of keywords],
+    "summary": "[summary]",
+    "experience": [
+        {
+            "company": "[company]",
+            "position": "[position]",
+            "duration": "[duration]",
+            "location": "[location]"
+        }
+    ]
+}`
             },
             {
                 role: 'user',
@@ -88,20 +99,35 @@ Do not mention OpenAI!`
 
     response
         .then((response) => {
-            let summary =response.data.choices[0].message.content;
-            const stmt = db.prepare('INSERT INTO resume (raw_data, summary) VALUES (?, ?)');
+            let content;
+            try {
+                content = JSON.parse(response.data.choices[0].message.content);
+            } catch (e) {
+                res.json(
+                    {
+                        error: e.message,
+                        text: response.data.choices[0].message.content,
+                    }
+                )
+            }
+            // db.run('CREATE TABLE IF NOT EXISTS `resume` (resume_id INTEGER PRIMARY KEY, `name` VARCHAR(255), email VARCHAR(255), raw_data TEXT, summary TEXT, technologies TEXT, experience TEXT)', function (err) {
+            const stmt = db.prepare('INSERT INTO resume (raw_data, name, email, summary, technologies, experience) VALUES (?, ?, ?, ?, ?, ?)');
             stmt.run(
                 req.body.data,
-                summary,
-                function (err) {
-                    res.send({
-                        summary
-                    })
+                content.name,
+                content.email,
+                content.summary,
+                JSON.stringify(content.technologies),
+                JSON.stringify(content.experience),
+                function () {
+                    res.json(content);
                 }
-            )
+            );
         })
         .catch((e) => {
-            res.send('Error' + e.message)
+            res.json({
+                error: 'Error' + e.message
+            })
         })
     ;
 });
