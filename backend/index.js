@@ -66,7 +66,7 @@ Do not mention OpenAI! `
 
 app.post('/upload-resume',  function (req, res) {
     const response = openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
+        model: "gpt-3.5-turbo-0301", // chatgpt model
         messages: [
             {
                 role: "system",
@@ -88,11 +88,16 @@ Do not mention OpenAI!`
 
     response
         .then((response) => {
-            res.send(response.data)
+            let summary =response.data.choices[0].message.content;
             const stmt = db.prepare('INSERT INTO resume (raw_data, summary) VALUES (?, ?)');
             stmt.run(
                 req.body.data,
-                response.data.choices[0].message.content,
+                summary,
+                function (err) {
+                    res.send({
+                        summary
+                    })
+                }
             )
         })
         .catch((e) => {
