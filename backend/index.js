@@ -52,16 +52,16 @@ app.get('/list', cors(corsOptions), function (req, res) {
     elasticsearch.search({
         index: 'resumes',
         query: {
-            // match_all: {},
+            match_all: {},
             // query_string: {
             //     query: 'react AND 2 year',
             //     fuzziness: 2,
             // }
-            match: {
-                summary: {
-                    query: 'typescript 2 years'
-                }
-            }
+            // match: {
+            //     summary: {
+            //         query: 'typescript 2 years'
+            //     }
+            // }
         }
     }).then((result) => {
         let rows = [];
@@ -73,6 +73,16 @@ app.get('/list', cors(corsOptions), function (req, res) {
         });
 
         res.json(rows);
+    })
+});
+
+app.get('/resume/:id', cors(corsOptions), function (req, res) {
+    const id = req.params.id;
+    const stmt = db.prepare('SELECT * FROM resume WHERE resume_id = ?');
+    stmt.get(id, function (err, result) {
+        result.technologies = JSON.parse(result.technologies);
+        result.experience = JSON.parse(result.experience);
+        res.json(result);
     })
 })
 

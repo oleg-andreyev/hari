@@ -53,3 +53,8 @@ GET http://localhost:3000/list
 Content-Type: application/json
 Accept: application/json
 
+###
+
+GET http://localhost:3000/resume/1
+Content-Type: application/json
+Accept: application/json
