@@ -12,5 +12,5 @@ export const ApiAdapter = axios.create({
 });
 
 export const ApiService: IApiService = {
-  createResume: (data) => ApiAdapter.post(`resume`, data),
+  createResume: (data) => ApiAdapter.post(`upload-resume`, {data}),
 };

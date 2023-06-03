@@ -16,7 +16,7 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
   createResume: async (data) => {
     try {
       const response = await ApiService.createResume({ data });
-      const { resume } = response.data;
+      const resume = response.data;
       const { resumes } = get();
       const updatedResumes = new Map(resumes);
       updatedResumes.set(resume.id, resume);
@@ -27,8 +27,8 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
     } catch (err: any) {
       // console.warn(err);
       return {
-        summary: 'test'
-      }
+        summary: "test",
+      };
     }
   },
 }));
