@@ -12,11 +12,21 @@ import { TagsInput } from "react-tag-input-component";
 
 import { useResumeStore } from "../store/useResumeStore";
 import { IResume } from "../interfaces/Resume";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
+import { useSearchParams } from "react-router-dom";
 
 export const ResumeList = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [resumes, setResumes] = useState<IResume[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
+  let initialTags = [];
+  if (searchParams.get("tags")) {
+    try {
+      initialTags = JSON.parse(searchParams.get("tags") as string);
+    } catch (err) {
+      // ignore
+    }
+  }
+  const [tags, setTags] = useState<string[]>(initialTags ?? []);
   const [currentResultTags, setCurrentResultTags] = useState<string[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const [maxScore, setMaxScore] = useState(100);
@@ -45,35 +55,36 @@ export const ResumeList = () => {
   return (
     <div className="d-flex flex-column p-4">
       <h3>
-        Candidates for <b>Web developer</b>
+        Candidates{" "}
+        {searchParams.get("title") ? (
+          <>
+            {`for `}
+            <b>{searchParams.get("title")}</b>
+          </>
+        ) : (
+          ""
+        )}
       </h3>
       <div>
-        <Card>
-          <Card.Body>
-            <div>
-              {/* <Alert variant="light">Might add extra info for specific tag usage, i.e., "experience:8 years"</Alert> */}
-              <div>Tags:</div>
-              <div className="d-flex">
-                <div className="flex-grow-1">
-                  <TagsInput
-                    value={tags}
-                    onChange={setTags}
-                    placeHolder="Enter tags to search on Resume"
-                    // onExisting={} // TODO add notice that it's a duplicate
-                  />
-                </div>
-                <Button
-                  variant="outline-success"
-                  className="ml-2"
-                  onClick={getResumes}
-                  disabled={isFetching}
-                >
-                  Apply tags
-                </Button>
-              </div>
-            </div>
-          </Card.Body>
-        </Card>
+        {/* <Alert variant="light">Might add extra info for specific tag usage, i.e., "experience:8 years"</Alert> */}
+        <div className="d-flex mb-2 mt-4">
+          <div className="flex-grow-1">
+            <TagsInput
+              value={tags}
+              onChange={setTags}
+              placeHolder="Enter tags to search on Resume"
+              // onExisting={} // TODO add notice that it's a duplicate
+            />
+          </div>
+          <Button
+            variant="outline-success"
+            className="ml-2"
+            onClick={getResumes}
+            disabled={isFetching}
+          >
+            Apply tags
+          </Button>
+        </div>
       </div>
       {error ? (
         <Alert variant="danger">{error}</Alert>

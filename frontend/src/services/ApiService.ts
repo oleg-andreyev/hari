@@ -18,7 +18,7 @@ export const ApiService: IApiService = {
   readResumes: (tags: string[]) =>
     ApiAdapter.get("list", {
       params: {
-        tags: tags.join("&"),
+        tags: JSON.stringify(tags),
       },
     }),
   readResume: (id: string) => ApiAdapter.get(`resume/${id}`),

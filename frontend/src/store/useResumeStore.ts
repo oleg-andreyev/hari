@@ -52,7 +52,7 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
     } catch (err: any) {
       // TODO: extract from error msg
       set({
-        error: "Could no retrieves list of Resumes!",
+        error: "Could no retrieve list of Resumes!",
       });
       console.warn(err);
       return [];

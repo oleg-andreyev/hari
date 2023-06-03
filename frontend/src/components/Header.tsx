@@ -14,7 +14,7 @@ export const Header: FC<any> = (): ReactElement => {
           <Navbar.Collapse id="navbar-nav">
             <Nav className="me-auto flex-grow">
               <NavLink to="/" className="nav-link">
-                Home
+              Positions
               </NavLink>
               <NavLink to="/resumes" className="nav-link">
                 Resume List
