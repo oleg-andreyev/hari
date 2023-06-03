@@ -78,10 +78,16 @@ Response must be in JSON format only with following structure:
     "summary": "[summary]",
     "experience": [
         {
-            "company": "[company]",
-            "position": "[position]",
-            "duration": "[duration]",
-            "location": "[location]"
+            "company": "[company1]",
+            "position": "[position1]",
+            "duration": "[duration_in_months1]",
+            "location": "[location1]"
+        },
+        {
+            "company": "[company2]",
+            "position": "[position2]",
+            "duration": "[duration_in_months2]",
+            "location": "[location2]"
         }
     ]
 }`
