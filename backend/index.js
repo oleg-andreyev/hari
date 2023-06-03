@@ -9,7 +9,7 @@ const db = new sqlite3.Database(`${__dirname}/var/database.db`);
 
 const bodyParser = require("body-parser");
 
-db.run('CREATE TABLE IF NOT EXISTS `resume` (raw_data TEXT)', function (err) {
+db.run('CREATE TABLE IF NOT EXISTS `resume` (resume_id INTEGER PRIMARY KEY, raw_data TEXT, summary TEXT)', function (err) {
     console.log(err);
 });
 
@@ -89,6 +89,11 @@ Do not mention OpenAI!`
     response
         .then((response) => {
             res.send(response.data)
+            const stmt = db.prepare('INSERT INTO resume (raw_data, summary) VALUES (?, ?)');
+            stmt.run(
+                req.body.data,
+                response.data.choices[0].message.content,
+            )
         })
         .catch((e) => {
             res.send('Error' + e.message)
