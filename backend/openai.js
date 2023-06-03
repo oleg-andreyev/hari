@@ -26,7 +26,7 @@ Response must be in JSON format only with following structure:
         {
             "company": "[company]",
             "position": "[position]",
-            "duration_in_months": "[duration_in_months]",
+            "duration_in_months": "[duration_in_months_as_int]",
             "location": "[location]"
         }
     ]

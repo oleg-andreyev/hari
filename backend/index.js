@@ -90,6 +90,18 @@ app.post('/upload-resume', cors(corsOptions), function (req, res) {
             }, 0)
             content.total_experience = total_experience;
 
+            // handle wrong duration_in_months
+            const experiences = [];
+            content.experience.forEach((experience) => {
+                try {
+                    new Date(experience.duration_in_months)
+                } catch (e) {
+                    experience.duration_in_months = 0;
+                }
+                experiences.push(experience)
+            });
+            content.experience = experiences;
+
             stmt.run(
                 req.body.data,
                 content.name,
