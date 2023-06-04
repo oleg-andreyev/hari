@@ -18,7 +18,11 @@ export const ApiService: IApiService = {
   createResume: (data: { data: string }) =>
     ApiAdapter.post(`api/upload-resume`, data),
   createResumeFiles: (data: { data: string }) =>
-    ApiAdapter.post(`api/upload-files`, data),
+    ApiAdapter.post(`api/upload-files`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }),
   readResumes: ({ tags, companies }) =>
     ApiAdapter.get("api/list", {
       params: {
