@@ -90,9 +90,16 @@ app.get('/api/list', cors(corsOptions), function (req, res) {
     // normalize companies
     companies = companies.map((company) => company.trim());
 
+    let exp_min = -1;
+    let exp_max = 9999;
+
+    if (req.query.exp) {
+        [exp_min, exp_max] = req.query.exp.split('-').map(v => parseInt(v));
+    }
+
     let query = {};
 
-    if (tags.length || companies.length) {
+    if (tags.length || companies.length || (exp_min || exp_max)) {
         if (tags.length) {
             query['bool'] = {}
             query['bool']['should'] = [];
@@ -114,6 +121,26 @@ app.get('/api/list', cors(corsOptions), function (req, res) {
                 "default_field": "experience.company",
                 "fuzziness": 2
             };
+        }
+
+        if (exp_min || exp_max) {
+            query['bool'] = query['bool'] || {}
+            query['bool']['must'] = query['bool']['must'] || [];
+            const range = {
+                range: {
+                    total_experience: {}
+                }
+            };
+
+            if (exp_min > -1) {
+                range['range']['total_experience']['gte'] = exp_min;
+            }
+
+            if (exp_max) {
+                range['range']['total_experience']['lte'] = exp_max;
+            }
+
+            query['bool']['must'].push(range)
         }
     } else {
         query = {

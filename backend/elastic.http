@@ -70,3 +70,75 @@ Content-Type: application/json
   },
   "size": 100
 }
+
+###
+
+POST https://elastic:L2ERWkoCwglQQYdm8TJ8@20.254.71.225:9200/resumes_new/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "query_string": {
+            "query": "react"
+          }
+        },
+        {
+          "terms": {
+            "technologies": [
+              "react"
+            ]
+          }
+        }
+      ],
+      "must": [
+        {
+          "range": {
+            "total_experience": {
+              "gte": 72
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "companies": {
+      "terms": {
+        "field": "experience.company"
+      }
+    }
+  },
+  "size": 100
+}
+
+###
+
+POST https://elastic:L2ERWkoCwglQQYdm8TJ8@20.254.71.225:9200/resumes_new/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "total_experience": {
+              "gte": 72
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "companies": {
+      "terms": {
+        "field": "experience.company"
+      }
+    }
+  },
+  "size": 100
+}
