@@ -279,7 +279,7 @@ app.post('/api/upload-files', upload.array('files'), async function (req, res) {
                         console.log(res)
                     })
 
-                    res.json(content);
+                    // res.json(content);
                 }
             );
         })
