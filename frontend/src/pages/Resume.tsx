@@ -94,15 +94,15 @@ export const Resume = () => {
   }
 
   let lastJobs = resume?.experience.slice(0, 3) ?? [];
-  let isJobHopper = lastJobs.length
-    ? showJobHopper &&
-      lastJobs.reduce(
-        (acc, { duration_in_months }) => (acc += duration_in_months),
-        0
-      ) /
-        lastJobs.length <=
-        4
-    : false;
+  let isJobHopper =
+    showJobHopper &&
+    lastJobs.length === 3 &&
+    lastJobs.reduce(
+      (acc, { duration_in_months }) => (acc += duration_in_months),
+      0
+    ) /
+      lastJobs.length <=
+      4;
 
   return (
     <div className="d-flex flex-column p-4">

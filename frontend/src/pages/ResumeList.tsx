@@ -147,7 +147,7 @@ export const ResumeList = () => {
       </h3>
       <div className="mb-2">
         {/* <Alert variant="light">Might add extra info for specific tag usage, i.e., "experience:8 years"</Alert> */}
-        <div className="d-flex mb-2 mt-4 gap-2 resume-list-inputs">
+        <div className="d-flex mb-2 gap-2 resume-list-inputs">
           <div className="flex-grow-1 resume-list-input-container expertise">
             <div className="resume-list-input-label">Expertise level</div>
             <Form.Select

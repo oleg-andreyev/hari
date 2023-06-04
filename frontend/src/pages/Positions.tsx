@@ -9,7 +9,7 @@ const positions = [
   {
     title: "Senior React Developer",
     subtitle: "Remote, EMEA",
-    tags: ["senior", "react", "redux", "agile"],
+    tags: ["react", "redux", "agile"],
     exp: "senior",
   },
   {
