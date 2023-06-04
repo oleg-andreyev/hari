@@ -37,73 +37,77 @@ export const ResumeList = () => {
   >([]);
   const [currentExp, setCurrentExp] = useState<string>("");
   const [isFetching, setIsFetching] = useState(false);
-  const [maxScore, setMaxScore] = useState(100);
   const [expertiseLevel, setExpertiseLevel] = useState(
     initialExpertiseLevel ?? ""
   );
-  const { error, readResumes } = useResumeStore((state) => ({
+  const {
+    companyOptions = [],
+    error,
+    readResumes,
+  } = useResumeStore((state) => ({
+    companyOptions: state.companies,
     error: state.error,
     readResumes: state.readResumes,
   }));
   const navigate = useNavigate();
   const { getItem } = useLocalStorage(true);
 
-  const getResumes = useCallback(async () => {
-    if (!isFetching) {
-      setIsFetching(true);
-      setSearchParams(
-        createSearchParams({
-          title: searchParams.get("title") ?? "",
-          tags: JSON.stringify(tags),
-          companies: JSON.stringify(companies),
-          exp: expertiseLevel,
-        })
-      );
-      const expertiseThreshold =
-        getItem(EXPERTISE_THRESHOLD_KEY) ?? EXPERTISE_THRESHOLD_DEFAULT;
-      let exp = "";
-      switch (expertiseLevel) {
-        case "junior": {
-          exp = `0-${expertiseThreshold[0]}`;
-          break;
+  const getResumes = useCallback(
+    async (tags: any, companies: any, expertiseLevel: any) => {
+      if (!isFetching) {
+        setIsFetching(true);
+        setSearchParams(
+          createSearchParams({
+            title: searchParams.get("title") ?? "",
+            tags: JSON.stringify(tags),
+            companies: JSON.stringify(companies),
+            exp: expertiseLevel,
+          })
+        );
+        const expertiseThreshold =
+          getItem(EXPERTISE_THRESHOLD_KEY) ?? EXPERTISE_THRESHOLD_DEFAULT;
+        let exp = "";
+        switch (expertiseLevel) {
+          case "junior": {
+            exp = `0-${expertiseThreshold[0]}`;
+            break;
+          }
+          case "mid": {
+            exp = `${expertiseThreshold[0]}-${expertiseThreshold[1]}`;
+            break;
+          }
+          case "senior": {
+            exp = `${expertiseThreshold[1]}`;
+            break;
+          }
         }
-        case "mid": {
-          exp = `${expertiseThreshold[0]}-${expertiseThreshold[1]}`;
-          break;
-        }
-        case "senior": {
-          exp = `${expertiseThreshold[1]}`;
-          break;
-        }
+        // should be fail safe, as API error is cathed already, if it fails it should kill the app
+        const data = await readResumes({ tags, companies, exp });
+        setResumes(data);
+        setCurrentResultTags(tags);
+        setCurrentResultCompanies(companies);
+        setCurrentExp(expertiseLevel);
+        setIsFetching(false);
       }
-      // should be fail safe, as API error is cathed already, if it fails it should kill the app
-      const data = await readResumes({ tags, companies, exp });
-      setResumes(data);
-      setMaxScore(Math.max(...data.map(({ score }) => score)));
-      setCurrentResultTags(tags);
-      setCurrentResultCompanies(companies);
-      setCurrentExp(expertiseLevel);
-      setIsFetching(false);
-    }
-  }, [
-    isFetching,
-    tags,
-    companies,
-    expertiseLevel,
-    setResumes,
-    setIsFetching,
-    setCurrentResultTags,
-    setCurrentResultCompanies,
-    setCurrentExp,
-  ]);
+    },
+    [
+      isFetching,
+      setResumes,
+      setIsFetching,
+      setCurrentResultTags,
+      setCurrentResultCompanies,
+      setCurrentExp,
+    ]
+  );
 
   const handleSetTags = useCallback(
     (tags: string[]) => setTags([...tags].map((tag) => tag.trim())),
     [setTags]
   );
   const handleSetCompanies = useCallback(
-    (companies: string[]) =>
-      setCompanies([...companies].map((company) => company.trim())),
+    (evt: any) => {
+      setCompanies([evt.target.value?.trim()]);
+    },
     [setCompanies]
   );
   const handleExpertiseLevelChange = useCallback(
@@ -116,11 +120,11 @@ export const ResumeList = () => {
     setTags([]);
     setCompanies([]);
     setExpertiseLevel("");
-    getResumes();
+    getResumes([], [], "");
   }, [setTags, setCompanies, setExpertiseLevel, getResumes]);
 
   useEffect(() => {
-    getResumes();
+    getResumes(tags, companies, expertiseLevel);
   }, []); // load initial view, thus empty deps list
 
   return (
@@ -162,16 +166,26 @@ export const ResumeList = () => {
             />
           </div>
           <div className="flex-grow-1 resume-list-input-container companies">
-            <div className="resume-list-input-label">Companies</div>
-            <TagsInput
-              value={companies}
+            <div className="resume-list-input-label">Company</div>
+            <Form.Select
+              value={companies[0] ?? ""}
               onChange={handleSetCompanies}
-              placeHolder="Filter by companies"
-            />
+            >
+              <option value="">Any</option>
+              {companyOptions.map((company, index) => (
+                <option value={company.key} key={index}>
+                  {company.key}
+                </option>
+              ))}
+            </Form.Select>
           </div>
         </div>
         <div className="d-flex gap-2">
-          <Button variant="success" onClick={getResumes} disabled={isFetching}>
+          <Button
+            variant="success"
+            onClick={() => getResumes(tags, companies, expertiseLevel)}
+            disabled={isFetching}
+          >
             Apply filters
           </Button>
           <Button

@@ -70,7 +70,13 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
       set({
         resumes: updatedResumesMap,
         cache: updatedCache,
-        companies: fetchedCompanies,
+        companies: [...get().companies, ...fetchedCompanies]
+          .filter(
+            (item, index, fullList) =>
+              item?.key.trim() &&
+              fullList.findIndex((x) => x.key === item.key) === index
+          )
+          .sort((a, b) => (a.key > b.key ? 1 : -1)),
       });
       return fetchedResumes;
     } catch (err: any) {
