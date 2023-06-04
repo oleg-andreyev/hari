@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
-import "./multiRangeSlider.css";
+import "./MultiRangeSlider.css";
 
 const MultiRangeSlider: React.FC<{
   min: number;
