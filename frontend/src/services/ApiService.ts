@@ -19,10 +19,11 @@ export const ApiService: IApiService = {
     ApiAdapter.post(`api/upload-resume`, data),
   createResumeFiles: (data: { data: string }) =>
     ApiAdapter.post(`api/upload-files`, data),
-  readResumes: (tags: string[]) =>
+  readResumes: ({ tags, companies }) =>
     ApiAdapter.get("api/list", {
       params: {
         tags: JSON.stringify(tags),
+        companies: JSON.stringify(companies),
       },
     }),
   readResume: (id: string) => ApiAdapter.get(`api/resume/${id}`),
