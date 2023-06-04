@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 const LOCAL_STORAGE: Record<string, string> = {};
 
 // if browser's localStorage is not available then this will use local variable which will be reseted on each reload :(
-const useLocalStorage = (parseJSON: boolean) => {
+const useLocalStorage = (parseJSON?: boolean) => {
   const isLocalStorageAvailable = !!window.localStorage?.clear;
 
   const getItem = useCallback(

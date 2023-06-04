@@ -3,6 +3,7 @@ import {
   Alert,
   Badge,
   Button,
+  Form,
   ProgressBar,
   Spinner,
   Table,
@@ -16,16 +17,23 @@ import { IResume } from "../interfaces/Resume";
 
 import "./ResumeList.css";
 import { getTotalExperience } from "../utils/getTotalExperience";
+import useLocalStorage from "../hooks/useLocalStorage";
+import {
+  EXPERTISE_THRESHOLD_DEFAULT,
+  EXPERTISE_THRESHOLD_KEY,
+} from "./Settings";
 
 export const ResumeList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [resumes, setResumes] = useState<IResume[]>([]);
   let initialTags = [];
   let initialCompanies = [];
+  let initialExpertiseLevel = "";
   if (searchParams.get("tags")) {
     try {
       initialTags = JSON.parse(searchParams.get("tags") ?? "[]");
       initialCompanies = JSON.parse(searchParams.get("companies") ?? "[]");
+      initialExpertiseLevel = searchParams.get("exp") ?? "";
     } catch (err) {
       // ignore
     }
@@ -36,13 +44,18 @@ export const ResumeList = () => {
   const [currentResultCompanies, setCurrentResultCompanies] = useState<
     string[]
   >([]);
+  const [currentExp, setCurrentExp] = useState<string>("");
   const [isFetching, setIsFetching] = useState(false);
   const [maxScore, setMaxScore] = useState(100);
+  const [expertiseLevel, setExpertiseLevel] = useState(
+    initialExpertiseLevel ?? ""
+  );
   const { error, readResumes } = useResumeStore((state) => ({
     error: state.error,
     readResumes: state.readResumes,
   }));
   const navigate = useNavigate();
+  const { getItem } = useLocalStorage(true);
 
   const getResumes = useCallback(async () => {
     if (!isFetching) {
@@ -52,23 +65,45 @@ export const ResumeList = () => {
           title: searchParams.get("title") ?? "",
           tags: JSON.stringify(tags),
           companies: JSON.stringify(companies),
+          exp: expertiseLevel,
         })
       );
+      const expertiseThreshold =
+        getItem(EXPERTISE_THRESHOLD_KEY) ?? EXPERTISE_THRESHOLD_DEFAULT;
+      let exp = "";
+      switch (expertiseLevel) {
+        case "junior": {
+          exp = `0-${expertiseThreshold[0]}`;
+          break;
+        }
+        case "mid": {
+          exp = `${expertiseThreshold[0]}-${expertiseThreshold[1]}`;
+          break;
+        }
+        case "senior": {
+          exp = `${expertiseThreshold[1]}`;
+          break;
+        }
+      }
       // should be fail safe, as API error is cathed already, if it fails it should kill the app
-      const data = await readResumes({ tags, companies });
+      const data = await readResumes({ tags, companies, exp });
       setResumes(data);
       setMaxScore(Math.max(...data.map(({ score }) => score)));
       setCurrentResultTags(tags);
       setCurrentResultCompanies(companies);
+      setCurrentExp(expertiseLevel);
       setIsFetching(false);
     }
   }, [
     isFetching,
     tags,
+    companies,
+    expertiseLevel,
     setResumes,
     setIsFetching,
     setCurrentResultTags,
     setCurrentResultCompanies,
+    setCurrentExp,
   ]);
 
   const handleSetTags = useCallback(
@@ -80,6 +115,18 @@ export const ResumeList = () => {
       setCompanies([...companies].map((company) => company.trim())),
     [setCompanies]
   );
+  const handleExpertiseLevelChange = useCallback(
+    (evt: any) => {
+      setExpertiseLevel(evt.target.value);
+    },
+    [setExpertiseLevel]
+  );
+  const clearFilters = useCallback(() => {
+    setTags([]);
+    setCompanies([]);
+    setExpertiseLevel("");
+    getResumes();
+  }, [setTags, setCompanies, setExpertiseLevel, getResumes]);
 
   useEffect(() => {
     getResumes();
@@ -98,10 +145,22 @@ export const ResumeList = () => {
           ""
         )}
       </h3>
-      <div>
+      <div className="mb-2">
         {/* <Alert variant="light">Might add extra info for specific tag usage, i.e., "experience:8 years"</Alert> */}
-        <div className="d-flex mb-2 mt-4 gap-2">
-          <div className="flex-grow-1 resume-list-input-container">
+        <div className="d-flex mb-2 mt-4 gap-2 resume-list-inputs">
+          <div className="flex-grow-1 resume-list-input-container expertise">
+            <div className="resume-list-input-label">Expertise level</div>
+            <Form.Select
+              value={expertiseLevel}
+              onChange={handleExpertiseLevelChange}
+            >
+              <option value="">Any</option>
+              <option value="junior">Junior</option>
+              <option value="mid">Mid</option>
+              <option value="senior">Senior</option>
+            </Form.Select>
+          </div>
+          <div className="flex-grow-1 resume-list-input-container tags">
             <div className="resume-list-input-label">
               Tags{" "}
               <span className="text-muted">(technologies, languages, etc)</span>
@@ -112,16 +171,25 @@ export const ResumeList = () => {
               placeHolder="Enter tags"
             />
           </div>
-          <div className="flex-grow-1 resume-list-input-container">
+          <div className="flex-grow-1 resume-list-input-container companies">
             <div className="resume-list-input-label">Companies</div>
             <TagsInput
               value={companies}
               onChange={handleSetCompanies}
-              placeHolder="Filter by past companies"
+              placeHolder="Filter by companies"
             />
           </div>
+        </div>
+        <div className="d-flex gap-2">
           <Button variant="success" onClick={getResumes} disabled={isFetching}>
             Apply filters
+          </Button>
+          <Button
+            variant="outline-danger"
+            onClick={clearFilters}
+            disabled={isFetching}
+          >
+            Clear
           </Button>
         </div>
       </div>
@@ -133,10 +201,17 @@ export const ResumeList = () => {
         <p>No resumes found</p>
       ) : (
         <>
-          {currentResultTags.length + currentResultCompanies.length ? (
+          {currentResultTags.length ||
+          currentResultCompanies.length ||
+          !!currentExp ? (
             <Alert variant="light">
               <div>Showing results with tags:</div>
               <div className="d-flex gap-2 flex-wrap">
+                {currentExp ? (
+                  <Badge bg="success" className="active-badge">
+                    {currentExp}
+                  </Badge>
+                ) : null}
                 {currentResultTags.map((tag, index) => (
                   <Badge
                     bg="primary"
@@ -148,7 +223,7 @@ export const ResumeList = () => {
                 ))}
                 {currentResultCompanies.map((tag, index) => (
                   <Badge
-                    bg="primary"
+                    bg="dark"
                     key={`company-${index}`}
                     className="active-badge"
                   >

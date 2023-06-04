@@ -9,7 +9,11 @@ export interface IApiService {
   createResumeFiles(data: {
     data: any; // TODO
   }): Promise<AxiosResponse<IResume["resume_id"]>>;
-  readResumes(data: { tags: string[]; companies: string[] }): Promise<
+  readResumes(data: {
+    tags: string[];
+    companies: string[];
+    exp: string;
+  }): Promise<
     AxiosResponse<{
       rows: IResume[];
       companies: ICompany[];

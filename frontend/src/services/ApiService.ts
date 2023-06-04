@@ -15,20 +15,19 @@ export const ApiAdapter = axios.create({
 
 // following CRUD naming convetion
 export const ApiService: IApiService = {
-  createResume: (data: { data: string }) =>
-    ApiAdapter.post(`api/upload-resume`, data),
-  createResumeFiles: (data: { data: string }) =>
+  createResume: (data) => ApiAdapter.post(`api/upload-resume`, data),
+  createResumeFiles: (data) =>
     ApiAdapter.post(`api/upload-files`, data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     }),
-  readResumes: ({ tags, companies }) =>
-    ApiAdapter.get("api/list", {
-      params: {
-        tags: JSON.stringify(tags),
-        companies: JSON.stringify(companies),
-      },
-    }),
+  readResumes: ({ tags, companies, exp }) => {
+    const params: Record<string, string> = {};
+    if (tags?.length) params.tags = JSON.stringify(tags);
+    if (companies?.length) params.companies = JSON.stringify(companies);
+    if (exp?.length) params.exp = exp;
+    return ApiAdapter.get("api/list", { params });
+  },
   readResume: (id: string) => ApiAdapter.get(`api/resume/${id}`),
 };

@@ -57,6 +57,9 @@
     flex-wrap: wrap;
     gap: 8px;
     margin: 16px;
+    overflow: auto;
+    height: calc(100% - 32px);
+    width: 100%;
   }
   
   .file-preview {

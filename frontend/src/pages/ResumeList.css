@@ -6,12 +6,27 @@
     font-size: 14px;
     font-weight: 400;
 }
-
+.resume-list-inputs {
+    flex-wrap: wrap;
+}
 .resume-list-input-container {
     position: relative;
 }
+.expertise {
+    width: 120px;
+    min-width: 120px;
+}
+.tags {
+    flex-grow: 1;
+    min-width: 400px;
+}
+.companies {
+    min-width: 300px;
+}
+.resume-list-input-container div {
+    line-height: 1 !important;
+}
 
 .resume-list-input-label {
-    position: absolute;
-    top: -24px;
+    margin-bottom: 8px;
 }

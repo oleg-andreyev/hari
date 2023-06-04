@@ -19,6 +19,7 @@ export interface ICustomersStore extends State {
   readResumes(data: {
     tags: string[];
     companies: string[];
+    exp: string;
   }): Promise<IResume[]>;
   readResume(id: string): Promise<IResume | undefined>;
 }
@@ -28,20 +29,16 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
   error: "",
   cache: new Map(),
   companies: [],
-  readResumes: async ({ tags, companies }) => {
+  readResumes: async ({ tags, companies, exp }) => {
     set({ error: "" });
     try {
       // first try for cached results, before making new request
       const { cache, resumes } = get();
-      const tagsId = [...tags]
+      const cacheId = [...tags, ...companies, exp]
         .sort()
-        .map((tag) => tag.toLowerCase())
+        .map((item) => item.toLowerCase())
         .join(";");
-      const companiesId = [...companies]
-        .sort()
-        .map((company) => company.toLowerCase())
-        .join(";");
-      const cachedOrder = cache.get(tagsId + companiesId);
+      const cachedOrder = cache.get(cacheId);
       if (cachedOrder?.length) {
         let allResumesAreAvailable = true;
         const cachedResumes = cachedOrder.map<IResume>((resumeId) => {
@@ -58,7 +55,7 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
       }
 
       const { rows: fetchedResumes, companies: fetchedCompanies } = (
-        await ApiService.readResumes({ tags, companies })
+        await ApiService.readResumes({ tags, companies, exp })
       ).data;
 
       const updatedResumesMap = new Map();
@@ -69,7 +66,7 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
         resumeOrder.push(resumeId);
       });
       const updatedCache = new Map(cache);
-      updatedCache.set(tagsId + companiesId, resumeOrder);
+      updatedCache.set(cacheId, resumeOrder);
       set({
         resumes: updatedResumesMap,
         cache: updatedCache,

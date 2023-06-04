@@ -9,17 +9,20 @@ const positions = [
   {
     title: "Senior React Developer",
     subtitle: "Remote, EMEA",
-    tags: ["senior", "react", "redux", "agile", "7 years of experience"],
+    tags: ["senior", "react", "redux", "agile"],
+    exp: "senior",
   },
   {
     title: "QA Engineer",
     subtitle: "Riga, Latvia",
     tags: ["Cypress", "Automated tests", "Jenkins"],
+    exp: "",
   },
   {
     title: "Junior Web Developer",
     subtitle: "Riga, Latvia",
-    tags: ["less than 2 years of experience", "javascript", "html", "css"],
+    tags: ["javascript", "html", "css"],
+    exp: "junior",
   },
 ];
 
@@ -40,6 +43,7 @@ export const Positions = () => {
                 search: `?${createSearchParams({
                   title: position.title,
                   tags: JSON.stringify(position.tags),
+                  exp: position.exp,
                 })}`,
               })
             }
@@ -48,6 +52,11 @@ export const Positions = () => {
               <Card.Title>{position.title}</Card.Title>
               <Card.Subtitle>{position.subtitle}</Card.Subtitle>
               <Card.Text className="d-flex gap-2 mt-2">
+                {position.exp ? (
+                  <Badge pill bg="success" key={`tag-${index}`}>
+                    {position.exp}
+                  </Badge>
+                ) : null}
                 {position.tags.map((tag, index) => (
                   <Badge pill bg="primary" key={`tag-${index}`}>
                     {tag}
@@ -58,20 +67,19 @@ export const Positions = () => {
           </Card>
         ))}
         <Card
-            className="mb-2 pointer"
-            onClick={() =>
-              navigate({
-                pathname: "resumes",
-              })
-            }
-          >
-            <Card.Body>
-              <Card.Title>Try Custom Tags</Card.Title>
-              <Card.Subtitle></Card.Subtitle>
-              <Card.Text className="d-flex gap-2 mt-2">
-              </Card.Text>
-            </Card.Body>
-          </Card>
+          className="mb-2 pointer"
+          onClick={() =>
+            navigate({
+              pathname: "resumes",
+            })
+          }
+        >
+          <Card.Body>
+            <Card.Title>Try Custom Tags</Card.Title>
+            <Card.Subtitle></Card.Subtitle>
+            <Card.Text className="d-flex gap-2 mt-2"></Card.Text>
+          </Card.Body>
+        </Card>
       </div>
     </div>
   );

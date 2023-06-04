@@ -4,8 +4,9 @@ import { Card, Form } from "react-bootstrap";
 import MultiRangeSlider from "../components/MultiRangeSlider/MultiRangeSlider";
 import useLocalStorage from "../hooks/useLocalStorage";
 import "./Settings.css";
+import { getTotalExperience } from "../utils/getTotalExperience";
 
-export const EXPERTISE_THRESHOLD_DEFAULT = [3, 6];
+export const EXPERTISE_THRESHOLD_DEFAULT = [36, 72];
 export const EXPERTISE_THRESHOLD_KEY = "expertiseThreshold";
 
 export const SHOW_JOB_HOPPER_DEFAULT = true;
@@ -45,16 +46,20 @@ export const Settings = () => {
           <div className="expertise-labels">
             <span>0</span>
             <span className="text-danger">Junior</span>
-            <span>{expertiseThreshold[0]}</span>
+            <span className="ym">
+              {getTotalExperience(expertiseThreshold[0], true)}
+            </span>
             <span className="text-warning">Mid</span>
-            <span>{expertiseThreshold[1]}</span>
+            <span className="ym">
+              {getTotalExperience(expertiseThreshold[1], true)}
+            </span>
             <span className="text-success">Senior</span>
-            <span>20</span>
+            <span>+</span>
           </div>
           <div>
             <MultiRangeSlider
               min={0}
-              max={20}
+              max={120}
               thresholds={expertiseThreshold}
               onChange={handleChange}
             />

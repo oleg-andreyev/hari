@@ -8,19 +8,17 @@ export function getTotalExperience(
     const years = (experience / 12) | 0;
     const months = experience % 12;
     if (years) {
-      totalExperienceParts.push(
-        years,
-        short ? "y" : years > 1 ? "years" : "year"
-      );
+      short
+        ? totalExperienceParts.push(`${years}y`)
+        : totalExperienceParts.push(years, years > 1 ? "years" : "year");
     }
     if (months) {
       if (totalExperienceParts.length > 0 && !short) {
         totalExperienceParts.push("and");
       }
-      totalExperienceParts.push(
-        months,
-        short ? "m" : years > 1 ? "months" : "month"
-      );
+      short
+        ? totalExperienceParts.push(`${months}m`)
+        : totalExperienceParts.push(months, years > 1 ? "months" : "month");
     }
   }
 
