@@ -76,20 +76,37 @@ const corsOptions = {
 
 // list
 app.get('/list', cors(corsOptions), function (req, res) {
+    const tags = JSON.parse(req.query.tags);
+    console.log(tags);
+
+    let query = null;
+
+    if (tags.length) {
+        query = {
+            bool: {
+                should: [
+                    {
+                        query_string: {
+                            query: tags.join(' AND ')
+                        }
+                    },
+                    {
+                        terms: {
+                            technologies: tags
+                        }
+                    }
+                ]
+            },
+        };
+    } else {
+        query = {
+            match_all: {},
+        };
+    }
+
     elasticsearch.search({
         index: 'resumes',
-        query: {
-            match_all: {},
-            // query_string: {
-            //     query: 'react AND 2 year',
-            //     fuzziness: 2,
-            // }
-            // match: {
-            //     summary: {
-            //         query: 'typescript 2 years'
-            //     }
-            // }
-        },
+        query,
         size: 100
     }).then((result) => {
         let rows = [];
