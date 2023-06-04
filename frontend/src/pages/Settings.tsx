@@ -59,7 +59,7 @@ export const Settings = () => {
           <div>
             <MultiRangeSlider
               min={0}
-              max={120}
+              max={100}
               thresholds={expertiseThreshold}
               onChange={handleChange}
             />
@@ -83,7 +83,7 @@ export const Settings = () => {
               onChange={handleJobHopperSwitch}
               type="switch"
               label="Show Job Hopper tag"
-            />
+            /> <span className="text-muted"> - Someone who has changed jobs recently</span>
           </div>
         </Card.Body>
       </Card>

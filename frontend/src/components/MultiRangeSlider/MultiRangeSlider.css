@@ -1,10 +1,12 @@
   .slider-container {
-    height: 60px;
+    height: 20px;
     width: 500px;
+    max-width: 100%;
   }
   
   .slider {
     position: relative;
+    max-width: 100%;
     width: 500px;
   }
   
@@ -67,6 +69,7 @@
     position: absolute;
     height: 0;
     width: 500px;
+    max-width: 100%;
     outline: none;
   }
   

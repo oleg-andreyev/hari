@@ -1,16 +1,22 @@
 import React, { useCallback, useState } from "react";
-import { Button, Form, Spinner } from "react-bootstrap";
+import { Button, Form, Spinner, Tab, Tabs } from "react-bootstrap";
 import { useResumeStore } from "../store/useResumeStore";
 import DragDropFileUpload from "../components/DragDropFileUpload/DragDropFileUpload";
 
-// change to "true" to use old text input;
-const useLegacyTextInput = false;
+enum UploadSource {
+  file = "file",
+  text = "text",
+  linkedin = "linkedin",
+  cvlv = "cvlv",
+  glassdoor = "glassdoor",
+}
 
 export const Upload = () => {
   const [text, setText] = useState("");
   const [isUploading, setIsUplaoding] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [uploadSource, setUploadSource] = useState(UploadSource.file);
   const { createResume, createResumeFiles } = useResumeStore((state) => ({
     createResume: state.createResume,
     createResumeFiles: state.createResumeFiles,
@@ -25,19 +31,24 @@ export const Upload = () => {
 
   const handleSend = useCallback(async () => {
     setIsUplaoding(true);
-    if (files.length) {
-      // if file uploaded then do FormData request
-      let data = new FormData();
-      files.forEach((file, i) => {
-        data.append(`data`, file, file.name);
-      });
-      await createResumeFiles(data);
-    } else {
-      await createResume({ data: text });
+    switch (uploadSource) {
+      case UploadSource.file: {
+        // if file uploaded then do FormData request
+        let data = new FormData();
+        files.forEach((file, i) => {
+          data.append(`data`, file, file.name);
+        });
+        await createResumeFiles(data);
+        break;
+      }
+      case UploadSource.text: {
+        await createResume({ data: text });
+        break;
+      }
     }
     setIsUplaoding(false);
     setIsProcessing(true);
-  }, [text, files, createResume, setIsUplaoding]);
+  }, [uploadSource, text, files, createResume, setIsUplaoding]);
 
   const handleReset = useCallback(() => {
     setText("");
@@ -51,19 +62,33 @@ export const Upload = () => {
         <div>
           <h3>Upload CVs</h3>
           <div className="mt-2 mb-2">
-            {useLegacyTextInput ? (
-              <Form>
-                <Form.Control
-                  as="textarea"
-                  value={text}
-                  placeholder="Input CV text here"
-                  style={{ height: "600px" }}
-                  onChange={handleInput}
-                />
-              </Form>
-            ) : (
-              <DragDropFileUpload handleFilesUpload={setFiles} />
-            )}
+            <Tabs
+              activeKey={uploadSource}
+              onSelect={setUploadSource as any}
+              className="mb-3"
+            >
+              <Tab eventKey={UploadSource.file} title="PDF File">
+                <DragDropFileUpload handleFilesUpload={setFiles} />
+              </Tab>
+              <Tab eventKey={UploadSource.text} title="Text">
+                <Form>
+                  <Form.Control
+                    as="textarea"
+                    value={text}
+                    placeholder="Input CV text here"
+                    style={{ height: "40vh" }}
+                    onChange={handleInput}
+                  />
+                </Form>
+              </Tab>
+              <Tab eventKey={UploadSource.linkedin} title="LinkedIn" disabled />
+              <Tab eventKey={UploadSource.cvlv} title="CV.lv" disabled />
+              <Tab
+                eventKey={UploadSource.glassdoor}
+                title="Glassdoor"
+                disabled
+              />
+            </Tabs>
           </div>
           <Button size="sm" onClick={handleSend} disabled={isUploading}>
             {isUploading ? (

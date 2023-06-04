@@ -51,7 +51,7 @@ export const Positions = () => {
             <Card.Body>
               <Card.Title>{position.title}</Card.Title>
               <Card.Subtitle>{position.subtitle}</Card.Subtitle>
-              <Card.Text className="d-flex gap-2 mt-2">
+              <Card.Text className="d-flex gap-2 mt-2 flex-wrap">
                 {position.exp ? (
                   <Badge pill bg="success" key={`tag-${index}`}>
                     {position.exp}

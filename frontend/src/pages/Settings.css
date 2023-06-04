@@ -1,5 +1,6 @@
 .expertise-labels {
     width: 500px;
+    max-width: 100%;
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;

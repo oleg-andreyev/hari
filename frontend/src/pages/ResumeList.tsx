@@ -205,7 +205,7 @@ export const ResumeList = () => {
           currentResultCompanies.length ||
           !!currentExp ? (
             <Alert variant="light">
-              <div>Showing results with tags:</div>
+              <div>Results below are filtered with:</div>
               <div className="d-flex gap-2 flex-wrap">
                 {currentExp ? (
                   <Badge bg="success" className="active-badge">
@@ -233,7 +233,7 @@ export const ResumeList = () => {
               </div>
             </Alert>
           ) : (
-            <Alert variant="light">No tags set.</Alert>
+            <Alert variant="light">No filters set.</Alert>
           )}
           <Table striped bordered hover>
             <thead>
