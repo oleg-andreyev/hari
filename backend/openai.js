@@ -1,8 +1,25 @@
-const {Configuration, OpenAIApi} = require("openai");
-const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
+var openai;
+if(process.env.USE_AZURE){
+    console.log("Using AsuzeOpenAI");
+    const {Configuration, OpenAIApi} = require("azure-openai");
+    const configuration = new Configuration({
+        apiKey: process.env.AZURE_OPENAI_API_KEY,
+        azure: {
+           apiKey: process.env.AZURE_OPENAI_API_KEY,
+           endpoint: "https://hackathon-hari.openai.azure.com",
+           deploymentName: "gpt35",
+        }
+     })
+     openai = new OpenAIApi(configuration);
+}else{
+    console.log("Using OpenAI");
+    const {Configuration, OpenAIApi} = require("openai");
+
+    const configuration = new Configuration({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
+    openai = new OpenAIApi(configuration);
+}
 
 module.exports = function fetchSummary(rawData) {
     const response = openai.createChatCompletion({
