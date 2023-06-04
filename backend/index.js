@@ -90,8 +90,8 @@ app.get('/api/list', cors(corsOptions), function (req, res) {
     // normalize companies
     companies = companies.map((company) => company.trim());
 
-    let exp_min = -1;
-    let exp_max = 9999;
+    let exp_min = null;
+    let exp_max = null;
 
     if (req.query.exp) {
         [exp_min, exp_max] = req.query.exp.split('-').map(v => parseInt(v));
