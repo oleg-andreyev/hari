@@ -229,7 +229,7 @@ const storage = multer.memoryStorage();
 // Set up the multer middleware with the storage configuration
 const upload = multer({ storage: storage });
 
-app.post('/api/upload-files', upload.array('data'), async function (req, res) {
+app.post('/api/upload-files',  cors(corsOptions), upload.array('data'), async function (req, res) {
 
     if (!req.files || req.files.length === 0) {
         return res.status(400).send('No files uploaded.');
@@ -259,7 +259,7 @@ app.post('/api/upload-files', upload.array('data'), async function (req, res) {
             connection.query(
                 'INSERT INTO resume (raw_data, name, email, summary, technologies, experience, total_experience, file) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                 [
-                    req.body.data,
+                    text,
                     content.name,
                     content.email,
                     content.summary,
