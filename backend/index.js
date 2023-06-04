@@ -85,8 +85,9 @@ app.get('/api/list', cors(corsOptions), function (req, res) {
     tags = tags.map((tag) => tag.toLowerCase());
 
     let companies = req.query.companies ? JSON.parse(req.query.companies) : [];
-    // normalize tags
-    //companies = companies.map((company) => company.toLowerCase());
+
+    // normalize companies
+    companies = companies.map((company) => company.trim());
 
     let query = null;
 
