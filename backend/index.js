@@ -66,7 +66,7 @@ app.use(bodyParser.json());
 app.use(cors())
 
 // homepage
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
     res.send('Hari!')
 });
 
@@ -75,7 +75,7 @@ const corsOptions = {
 };
 
 // list
-app.get('/list', cors(corsOptions), function (req, res) {
+app.get('/api/list', cors(corsOptions), function (req, res) {
     const tags = JSON.parse(req.query.tags);
     console.log(tags);
 
@@ -121,7 +121,7 @@ app.get('/list', cors(corsOptions), function (req, res) {
     })
 });
 
-app.get('/resume/:id', cors(corsOptions), function (req, res) {
+app.get('/api/resume/:id', cors(corsOptions), function (req, res) {
     const id = req.params.id;
     connection.query(`SELECT * FROM resume WHERE resume_id = ?`, [id], function (err, results) {
         if (err) throw err;
@@ -142,7 +142,7 @@ app.get('/resume/:id', cors(corsOptions), function (req, res) {
 
 const fetchSummary = require('./openai');
 
-app.post('/upload-resume', cors(corsOptions), function (req, res) {
+app.post('/api/upload-resume', cors(corsOptions), function (req, res) {
     const response = fetchSummary(req.body.data);
 
     response.then((content) => {

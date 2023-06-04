@@ -14,12 +14,12 @@ export const ApiAdapter = axios.create({
 // following CRUD naming convetion
 export const ApiService: IApiService = {
   createResume: (data: { data: string }) =>
-    ApiAdapter.post(`upload-resume`, data),
+    ApiAdapter.post(`api/upload-resume`, data),
   readResumes: (tags: string[]) =>
-    ApiAdapter.get("list", {
+    ApiAdapter.get("api/list", {
       params: {
         tags: JSON.stringify(tags),
       },
     }),
-  readResume: (id: string) => ApiAdapter.get(`resume/${id}`),
+  readResume: (id: string) => ApiAdapter.get(`api/resume/${id}`),
 };
