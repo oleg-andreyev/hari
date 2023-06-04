@@ -11,8 +11,9 @@ export const Upload = () => {
   const [isUploading, setIsUplaoding] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-  const { createResume } = useResumeStore((state) => ({
+  const { createResume, createResumeFiles } = useResumeStore((state) => ({
     createResume: state.createResume,
+    createResumeFiles: state.createResumeFiles,
   }));
 
   const handleInput = useCallback(
@@ -26,11 +27,11 @@ export const Upload = () => {
     setIsUplaoding(true);
     if (files.length) {
       // if file uploaded then do FormData request
-      let form = new FormData();
+      let data = new FormData();
       files.forEach((file, i) => {
-        form.append(`resume-${i}`, file, file.name);
+        data.append(`resume-${i}`, file, file.name);
       });
-      await createResume(form);
+      await createResumeFiles(data);
     } else {
       await createResume({ data: text });
     }

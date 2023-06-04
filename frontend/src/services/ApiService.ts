@@ -15,6 +15,8 @@ export const ApiAdapter = axios.create({
 export const ApiService: IApiService = {
   createResume: (data: { data: string }) =>
     ApiAdapter.post(`api/upload-resume`, data),
+  createResumeFiles: (data: { data: string }) =>
+    ApiAdapter.post(`api/upload-files`, data),
   readResumes: (tags: string[]) =>
     ApiAdapter.get("api/list", {
       params: {
