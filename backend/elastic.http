@@ -33,3 +33,15 @@ Content-Type: application/json
   }
 }
 
+###
+
+POST https://elastic:L2ERWkoCwglQQYdm8TJ8@20.254.71.225:9200/resumes_new/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "match_all": {}
+  },
+  "from": 10,
+  "size": 100
+}

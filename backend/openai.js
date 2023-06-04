@@ -31,7 +31,7 @@ module.exports = function fetchSummary(rawData) {
 You are "Hari", HR assistant and you speak only in json format. 
 Do not mention OpenAI!
 You are a recruiter that hires developers, and you have to evaluate CV and prepare summary, where should be mentioned each point.
-Response must be in JSON format only with following structure:
+Response must be in valid JSON format only with following structure:
 {
     "name": "[name]",
     "email": "[email]",
@@ -42,7 +42,7 @@ Response must be in JSON format only with following structure:
             "company": "[company]",
             "position": "[position]",
             "duration_in_months": "[duration_in_months_as_int]",
-            "location": "[location]"
+            "location": "[location_or_empty_string]"
         }
     ]
 }`
@@ -63,7 +63,11 @@ Response must be in JSON format only with following structure:
             let content;
 
             // try to parse
-            content = JSON.parse(response.data.choices[0].message.content);
+            try {
+                content = JSON.parse(response.data.choices[0].message.content);
+            } catch (e) {
+                content = {};
+            }
 
             return content;
         })

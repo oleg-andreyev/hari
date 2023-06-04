@@ -8,7 +8,7 @@ const {Client} = require('@elastic/elasticsearch')
 const bodyParser = require("body-parser");
 const mysql = require('mysql');
 const multer = require('multer');
-const { GetTextFromPDF } = require('./pdfToText');
+const {GetTextFromPDF} = require('./pdfToText');
 
 // load configs
 ['.env', '.env.local'].forEach((file) => {
@@ -77,6 +77,7 @@ const corsOptions = {
 };
 
 // list
+const indexName = 'resumes_new';
 app.get('/api/list', cors(corsOptions), function (req, res) {
     console.log(req.query);
 
@@ -127,7 +128,6 @@ app.get('/api/list', cors(corsOptions), function (req, res) {
     }
 
 
-
     let aggs = {
         companies: {
             terms: {
@@ -137,7 +137,7 @@ app.get('/api/list', cors(corsOptions), function (req, res) {
     };
 
     elasticsearch.search({
-        index: 'resumes_new',
+        index: indexName,
         query: query,
         aggs: aggs,
         size: 100
@@ -205,7 +205,7 @@ app.post('/api/upload-resume', cors(corsOptions), function (req, res) {
                 content.resume_id = results.insertId;
 
                 elasticsearch.index({
-                    index: 'resumes',
+                    index: indexName,
                     document: content
                 }).then(res => {
                     console.log(res)
@@ -223,76 +223,79 @@ app.post('/api/upload-resume', cors(corsOptions), function (req, res) {
 });
 
 
-
-
 // Set up the storage configuration for multer
 const storage = multer.memoryStorage();
 // Set up the multer middleware with the storage configuration
-const upload = multer({ storage: storage });
+const upload = multer({storage: storage});
 
-app.post('/api/upload-files',  cors(corsOptions), upload.array('data'), async function (req, res) {
+app.post('/api/upload-files', cors(corsOptions), upload.array('data'), async function (req, res) {
 
     if (!req.files || req.files.length === 0) {
         return res.status(400).send('No files uploaded.');
     }
 
-    for (const file of req.files) {
-        const fileStream = file.buffer;
-        let text;
-        //extract textfrom PDF
-        try {
-            text = await GetTextFromPDF(fileStream);
-            console.log('PDF text:', text);
-            // Process the extracted text as needed
-        } catch (error) {
-            console.error('Error extracting text from PDF:', error);
-            res.status(500).send('Error extracting text from PDF.');
-        }
-        //send to Gipity
-        const response = fetchSummary(text);
+    const promises = req.files.map((file) => {
+        return new Promise(async (resolve, reject) => {
+            const fileStream = file.buffer;
+            let text;
 
-        response.then((content) => {
-            let total_experience = content.experience.reduce(function (a, b) {
-                return a + parseInt(b.duration_in_months);
-            }, 0)
-            content.total_experience = total_experience;
+            //extract textfrom PDF
+            try {
+                text = await GetTextFromPDF(fileStream);
+                console.log('PDF text:', text);
+                // Process the extracted text as needed
+            } catch (error) {
+                console.error('Error extracting text from PDF:', error);
+                reject(error);
+                return;
+            }
 
-            connection.query(
-                'INSERT INTO resume (raw_data, name, email, summary, technologies, experience, total_experience, file) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                [
-                    text,
-                    content.name,
-                    content.email,
-                    content.summary,
-                    JSON.stringify(content.technologies),
-                    JSON.stringify(content.experience),
-                    total_experience,
-                    fileStream
-                ],
-                function (err, results, fields) {
-                    if (err) throw err;
-                    content.resume_id = results.insertId;
+            //send to Gipity
+            const response = fetchSummary(text);
 
-                    elasticsearch.index({
-                        index: 'resumes',
-                        document: content
-                    }).then(res => {
-                        console.log(res)
-                    })
+            response.then((content) => {
+                content.total_experience = content.experience.reduce(function (a, b) {
+                    return a + parseInt(b.duration_in_months);
+                }, 0);
 
-                    // res.json(content);
-                }
-            );
+                connection.query(
+                    'INSERT INTO resume (raw_data, name, email, summary, technologies, experience, total_experience, file) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                    [
+                        text,
+                        content.name,
+                        content.email,
+                        content.summary,
+                        JSON.stringify(content.technologies),
+                        JSON.stringify(content.experience),
+                        content.experience.reduce(function (a, b) {
+                            return a + parseInt(b.duration_in_months);
+                        }, 0),
+                        fileStream
+                    ],
+                    function (err, results, fields) {
+                        if (err) throw err;
+                        content.resume_id = results.insertId;
+
+                        elasticsearch.index({
+                            index: indexName,
+                            document: content
+                        }).then(result => {
+                            console.log(result)
+                            resolve();
+                        });
+                    }
+                );
+            })
         })
-            .catch((e) => {
-                res.json({
-                    error: 'Error' + e.message
-                })
-            });
-    }
-    // Return a response indicating success
-    res.send('Files uploaded successfully.');
-});
+    })
+
+    Promise.all(promises).then(() => {
+        res.send('Success');
+    }).catch((e) => {
+        res.status(400);
+        res.send('Error '+e.message);
+    })
+})
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
