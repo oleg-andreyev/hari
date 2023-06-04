@@ -5,8 +5,11 @@ import "./multiRangeSlider.css";
 const MultiRangeSlider: React.FC<{
   min: number;
   max: number;
-  onChange(data: { min: number; max: number }): void;
-}> = ({ min, max, onChange }) => {
+  thresholds: [number, number]; // TODO update types to match min/max margins
+  onChange(thresholds: [number, number]): void;
+}> = (props) => {
+  const { onChange, thresholds } = props;
+  const min = Math.min(), max,
   const [minVal, setMinVal] = useState(min);
   const [maxVal, setMaxVal] = useState(max);
   const minValRef = useRef(min);

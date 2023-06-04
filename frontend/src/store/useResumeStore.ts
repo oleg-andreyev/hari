@@ -2,6 +2,7 @@ import create, { State } from "zustand";
 
 import { ApiService } from "../services/ApiService";
 import { IResume } from "../interfaces/Resume";
+import { ICompany } from "../interfaces/Company";
 
 type ResumesMap = Map<IResume["resume_id"], IResume>;
 
@@ -11,8 +12,10 @@ export interface ICustomersStore extends State {
   resumes: ResumesMap;
   error: string;
   cache: Map<string, IResume["resume_id"][]>;
+  companies: ICompany[];
   // actions
   createResume(data: any): Promise<any>;
+  createResumeFiles(data: any): Promise<any>;
   readResumes(tags: string[]): Promise<IResume[]>;
   readResume(id: string): Promise<IResume | undefined>;
 }
@@ -21,6 +24,7 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
   resumes: new Map(),
   error: "",
   cache: new Map(),
+  companies: [],
   readResumes: async (tags: string[]) => {
     set({ error: "" });
     try {
@@ -46,7 +50,9 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
         }
       }
 
-      const fetchedResumes = (await ApiService.readResumes(tags)).data;
+      const { rows: fetchedResumes, companies } = (
+        await ApiService.readResumes(tags)
+      ).data;
 
       // Start of REMOVE
       // add random score, can't reassign, thus need to mutate
@@ -68,6 +74,7 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
       set({
         resumes: updatedResumesMap,
         cache: updatedCache,
+        companies,
       });
       return fetchedResumes;
     } catch (err: any) {
@@ -107,6 +114,19 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
     set({ error: "" });
     try {
       return (await ApiService.createResume(data)).data;
+    } catch (err: any) {
+      // TODO: extract from error msg
+      set({
+        error: "Could not upload Resume!",
+      });
+      console.warn(err);
+      return;
+    }
+  },
+  createResumeFiles: async (data) => {
+    set({ error: "" });
+    try {
+      return (await ApiService.createResumeFiles(data)).data;
     } catch (err: any) {
       // TODO: extract from error msg
       set({
