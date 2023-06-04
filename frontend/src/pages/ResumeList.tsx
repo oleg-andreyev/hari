@@ -145,8 +145,7 @@ export const ResumeList = () => {
                         variant={((score) => {
                           if (score / maxScore > 0.85) return "success";
                           if (score / maxScore < 0.35) return "danger";
-                          if (score / maxScore < 0.6) return "warning";
-                          return "info";
+                          return "warning";
                         })(resume.score)}
                         className="border"
                       />

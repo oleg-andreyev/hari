@@ -9,12 +9,14 @@ export const Header: FC<any> = (): ReactElement => {
     <header>
       <Navbar bg="info" expand="md">
         <Container>
-          <Navbar.Brand>HARI</Navbar.Brand>
+          <NavLink to="/" className="nav-link">
+            <Navbar.Brand>HARI</Navbar.Brand>
+          </NavLink>
           <Navbar.Toggle aria-controls="navbar-nav" />
           <Navbar.Collapse id="navbar-nav">
             <Nav className="me-auto flex-grow">
               <NavLink to="/" className="nav-link">
-              Positions
+                Positions
               </NavLink>
               <NavLink to="/resumes" className="nav-link">
                 Resume List
@@ -23,6 +25,9 @@ export const Header: FC<any> = (): ReactElement => {
                 Upload CV
               </NavLink>
             </Nav>
+            <NavLink to="/settings" className="nav-link">
+              Settings
+            </NavLink>
           </Navbar.Collapse>
         </Container>
       </Navbar>

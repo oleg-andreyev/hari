@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Button, Form, Spinner } from "react-bootstrap";
 import { useResumeStore } from "../store/useResumeStore";
-import DragDropFileUpload from "../components/DragDropFileUpload";
+import DragDropFileUpload from "../components/DragDropFileUpload/DragDropFileUpload";
 
 // change to "true" to use old text input;
 const useLegacyTextInput = false;

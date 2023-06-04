@@ -9,13 +9,13 @@ import "./Resume.css";
 let ExperienceDurationBadge: React.FC<{
   duration: number;
 }> = ({ duration }) => {
-  let variant = "secondary";
+  let variant = "warning";
   if (duration < 4) {
-    variant = "warning";
+    variant = "danger";
   } else if (duration > 29) {
     variant = "success";
-  } else if (duration > 17) {
-    variant = "primary";
+  } else if (duration > 11) {
+    variant = "secondary";
   }
   let durationText = `${duration} months`;
   if (duration > 11) {
@@ -142,7 +142,10 @@ export const Resume = () => {
                   <div className="fw-bold">{experience.position}</div>
                   <span className="text-secondary">at </span>
                   {experience.company}
-                  {experience.location ? `, ${experience.location}` : ""}
+                  {experience.location &&
+                  experience.location.toLowerCase() !== "unknown"
+                    ? `, ${experience.location}`
+                    : ""}
                 </div>
                 {!!experience.duration_in_months && (
                   <ExperienceDurationBadge

@@ -7,6 +7,7 @@ import { Upload } from "./pages/Upload";
 import { NotFound } from "./pages/404";
 import { ResumeList } from "./pages/ResumeList";
 import { Resume } from "./pages/Resume";
+import { Settings } from "./pages/Settings";
 
 const Layout = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => (
         <Route path="upload" element={<Upload />} />
         <Route path="resumes" element={<ResumeList />} />
         <Route path="resumes/:id" element={<Resume />} />
+        <Route path="settings" element={<Settings />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
