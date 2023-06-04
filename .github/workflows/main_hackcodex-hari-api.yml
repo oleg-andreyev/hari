@@ -22,7 +22,6 @@ jobs:
           node-version: '18.x'
 
       - name: npm install, build, and test
-        working-directory: backend
         run: |
           cd backend
           npm install
