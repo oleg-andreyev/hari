@@ -116,11 +116,15 @@ app.get('/api/list', cors(corsOptions), function (req, res) {
         }
 
         if (companies.length) {
-            query['query_string'] = {
-                "query": `*${companies.join('* OR *')}*`,
-                "default_field": "experience.company",
-                "fuzziness": 2
-            };
+            query['bool'] = query['bool'] || {}
+            query['bool']['must'] = query['bool']['must'] || [];
+            query['bool']['must'].push({
+                "query_string": {
+                    "query": `*${companies.join('* OR *')}*`,
+                    "default_field": "experience.company",
+                    "fuzziness": 2
+                }
+            })
         }
 
         if (exp_min || exp_max) {
