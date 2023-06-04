@@ -9,7 +9,7 @@ const bodyParser = require("body-parser");
 const mysql = require('mysql');
 
 // load configs
-    ['.env', '.env.local'].forEach((file) => {
+['.env', '.env.local'].forEach((file) => {
     if (fs.existsSync(`${__dirname}/${file}`)) {
         dotenv.config({
             path: `${__dirname}/${file}`,
@@ -76,37 +76,67 @@ const corsOptions = {
 
 // list
 app.get('/list', cors(corsOptions), function (req, res) {
-    const tags = JSON.parse(req.query.tags);
-    console.log(tags);
+    console.log(req.query);
+
+    let tags = req.query.tags ? JSON.parse(req.query.tags) : [];
+    // normalize tags
+    tags = tags.map((tag) => tag.toLowerCase());
+
+    let companies = req.query.companies ? JSON.parse(req.query.companies) : [];
+    // normalize tags
+    //companies = companies.map((company) => company.toLowerCase());
 
     let query = null;
 
-    if (tags.length) {
+    if (tags.length || companies.length) {
         query = {
-            bool: {
-                should: [
-                    {
-                        query_string: {
-                            query: tags.join(' AND ')
-                        }
-                    },
-                    {
-                        terms: {
-                            technologies: tags
-                        }
-                    }
-                ]
-            },
+            bool: {},
         };
+
+        if (tags.length) {
+            query['bool']['should'] = [
+                {
+                    query_string: {
+                        query: tags.join(' AND ')
+                    }
+                },
+                {
+                    terms: {
+                        technologies: tags
+                    }
+                }
+            ];
+        }
+
+        if (companies.length) {
+            query['bool']['must'] = [
+                {
+                    terms: {
+                        "experience.company": companies
+                    }
+                }
+            ];
+        }
     } else {
         query = {
             match_all: {},
         };
     }
 
+
+
+    let aggs = {
+        companies: {
+            terms: {
+                field: "experience.company"
+            }
+        }
+    };
+
     elasticsearch.search({
-        index: 'resumes',
-        query,
+        index: 'resumes_new',
+        query: query,
+        aggs: aggs,
         size: 100
     }).then((result) => {
         let rows = [];
@@ -117,13 +147,18 @@ app.get('/list', cors(corsOptions), function (req, res) {
             })
         });
 
-        res.json(rows);
+        res.json({
+            rows,
+            companies: result.aggregations['companies'].buckets
+        });
     })
 });
 
 app.get('/resume/:id', cors(corsOptions), function (req, res) {
     const id = req.params.id;
-    connection.query(`SELECT * FROM resume WHERE resume_id = ?`, [id], function (err, results) {
+    connection.query(`SELECT *
+                      FROM resume
+                      WHERE resume_id = ?`, [id], function (err, results) {
         if (err) throw err;
         if (results.length === 0) {
             res.status(404);
@@ -146,37 +181,37 @@ app.post('/upload-resume', cors(corsOptions), function (req, res) {
     const response = fetchSummary(req.body.data);
 
     response.then((content) => {
-            let total_experience = content.experience.reduce(function (a, b) {
-                return a + parseInt(b.duration_in_months);
-            }, 0)
-            content.total_experience = total_experience;
+        let total_experience = content.experience.reduce(function (a, b) {
+            return a + parseInt(b.duration_in_months);
+        }, 0)
+        content.total_experience = total_experience;
 
-            connection.query(
-                'INSERT INTO resume (raw_data, name, email, summary, technologies, experience, total_experience) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                [
-                    req.body.data,
-                    content.name,
-                    content.email,
-                    content.summary,
-                    JSON.stringify(content.technologies),
-                    JSON.stringify(content.experience),
-                    total_experience,
-                ],
-                function (err, results, fields) {
-                    if (err) throw err;
-                    content.resume_id = results.insertId;
+        connection.query(
+            'INSERT INTO resume (raw_data, name, email, summary, technologies, experience, total_experience) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [
+                req.body.data,
+                content.name,
+                content.email,
+                content.summary,
+                JSON.stringify(content.technologies),
+                JSON.stringify(content.experience),
+                total_experience,
+            ],
+            function (err, results, fields) {
+                if (err) throw err;
+                content.resume_id = results.insertId;
 
-                    elasticsearch.index({
-                        index: 'resumes',
-                        document: content
-                    }).then(res => {
-                        console.log(res)
-                    })
+                elasticsearch.index({
+                    index: 'resumes_new',
+                    document: content
+                }).then(res => {
+                    console.log(res)
+                })
 
-                    res.json(content);
-                }
-            );
-        })
+                res.json(content);
+            }
+        );
+    })
         .catch((e) => {
             res.json({
                 error: 'Error' + e.message

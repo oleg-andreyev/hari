@@ -1,0 +1,35 @@
+GET https://elastic:L2ERWkoCwglQQYdm8TJ8@20.254.71.225:9200/resumes_new/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "match_all": {}
+  },
+  "aggs": {
+    "companies": {
+      "terms": {
+        "field": "experience.company"
+      }
+    }
+  }
+}
+
+###
+
+GET https://elastic:L2ERWkoCwglQQYdm8TJ8@20.254.71.225:9200/resumes_new/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "terms": {
+            "experience.company": ["DYNATECH"]
+          }
+        }
+      ]
+    }
+  }
+}
+
