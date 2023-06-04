@@ -2,7 +2,7 @@ export interface IResumeExperience {
   company: string;
   location: string;
   position: string;
-  duration: string;
+  duration_in_months: number;
 }
 
 export interface IResume {
@@ -13,4 +13,5 @@ export interface IResume {
   technologies: string[];
   experience: IResumeExperience[];
   score: number;
+  total_experience: number;
 }

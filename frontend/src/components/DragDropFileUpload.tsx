@@ -6,6 +6,7 @@ const DragDropFileUpload: React.FC<{
 }> = ({ handleFilesUpload }) => {
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [files, setFiles] = useState<File[]>([]);
 
   const handleDrag = useCallback(
     (e: any) => {
@@ -32,20 +33,32 @@ const DragDropFileUpload: React.FC<{
       e.stopPropagation();
       setDragActive(false);
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        handleFilesUpload(e.dataTransfer.files);
+        handleFilesUpload([...files, ...e.dataTransfer.files]);
+        setFiles([...files, ...e.dataTransfer.files]);
       }
     },
-    [setDragActive, handleFilesUpload]
+    [files, setDragActive, handleFilesUpload, setFiles]
   );
 
   const handleChange = useCallback(
     (e: any) => {
       e.preventDefault();
       if (e.target.files && e.target.files[0]) {
-        handleFilesUpload(e.target.files);
+        handleFilesUpload([...files, ...e.target.files]);
+        setFiles([...files, ...e.target.files]);
       }
     },
-    [handleFilesUpload]
+    [files, handleFilesUpload, setFiles]
+  );
+
+  const removeFile = useCallback(
+    (index: number) => {
+      let updatedFiles = [...files];
+      updatedFiles.splice(index, 1);
+      handleFilesUpload(updatedFiles);
+      setFiles(updatedFiles);
+    },
+    [files, setFiles, handleFilesUpload]
   );
 
   return (
@@ -54,12 +67,25 @@ const DragDropFileUpload: React.FC<{
       onDragEnter={handleDrag}
       onSubmit={(e) => e.preventDefault()}
     >
+      {files.length ? (
+        <div className="active-files">
+          {[...files].map((file, index) => (
+            <div className="file-preview border" key={index}>
+              <div className="file-remove" onClick={() => removeFile(index)}>
+                X
+              </div>
+              <div className="file-name">{file.name}</div>
+            </div>
+          ))}
+        </div>
+      ) : null}
       <input
         ref={inputRef}
         type="file"
         id="input-file-upload"
         multiple={true}
         onChange={handleChange}
+        accept="pdf"
       />
       <label
         id="label-file-upload"
@@ -68,11 +94,12 @@ const DragDropFileUpload: React.FC<{
       >
         <div>
           <p>Drag and drop Resumes here or</p>
-          <button className="upload-button" onClick={inputRef.current?.click}>
+          <button className="upload-button" onClick={() => inputRef.current?.click()}>
             Upload a file
           </button>
         </div>
       </label>
+
       {dragActive && (
         <div
           id="drag-file-element"

@@ -85,7 +85,7 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
   createResume: async (data) => {
     set({ error: "" });
     try {
-      return (await ApiService.createResume({ data })).data;
+      return (await ApiService.createResume(data)).data;
     } catch (err: any) {
       // TODO: extract from error msg
       set({

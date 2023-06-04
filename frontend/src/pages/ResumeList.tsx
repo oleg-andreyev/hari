@@ -3,17 +3,18 @@ import {
   Alert,
   Badge,
   Button,
-  Card,
   ProgressBar,
   Spinner,
   Table,
 } from "react-bootstrap";
 import { TagsInput } from "react-tag-input-component";
+import { useNavigate } from "react-router";
+import { useSearchParams } from "react-router-dom";
 
 import { useResumeStore } from "../store/useResumeStore";
 import { IResume } from "../interfaces/Resume";
-import { useLocation, useNavigate } from "react-router";
-import { useSearchParams } from "react-router-dom";
+
+import "./ResumeList.css";
 
 export const ResumeList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -96,12 +97,18 @@ export const ResumeList = () => {
         <>
           {currentResultTags.length ? (
             <Alert variant="light">
-              Showing results with tags:{" "}
-              {currentResultTags.map((tag, index) => (
-                <Badge pill bg="secondary" key={`tag-${index}`}>
-                  {tag}
-                </Badge>
-              ))}
+              <div>Showing results with tags:</div>
+              <div className="d-flex gap-2 flex-wrap">
+                {currentResultTags.map((tag, index) => (
+                  <Badge
+                    bg="primary"
+                    key={`tag-${index}`}
+                    className="active-badge"
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
             </Alert>
           ) : (
             <Alert variant="light">No tags set.</Alert>
@@ -111,7 +118,7 @@ export const ResumeList = () => {
               <tr>
                 <th>#</th>
                 <th>Name</th>
-                <th>Rating</th>
+                <th>HARI Score</th>
                 <th>Technologies</th>
               </tr>
             </thead>
@@ -121,18 +128,26 @@ export const ResumeList = () => {
                   <tr
                     key={resume.resume_id}
                     onClick={() => navigate(`/resumes/${resume.resume_id}`)}
+                    className="pointer"
                   >
                     <td>{index + 1}</td>
                     <td>{resume.name}</td>
                     <td>
                       <ProgressBar
-                        now={(resume.score / maxScore) * 100}
+                        now={Math.max(10, (resume.score / maxScore) * 100)}
                         label={resume.score}
+                        variant={((score) => {
+                          if (score / maxScore > 0.85) return "success";
+                          if (score / maxScore < 0.35) return "danger";
+                          if (score / maxScore < 0.6) return "warning";
+                          return "info";
+                        })(resume.score)}
+                        className="border"
                       />
                     </td>
                     <td>{resume.technologies.join(", ")}</td>
                   </tr>
-                  <tr key={`summary-${resume.resume_id}`}>
+                  <tr key={`summary-${resume.resume_id}`} className="pointer">
                     <td></td>
                     <td colSpan={3}>{resume.summary}</td>
                   </tr>
