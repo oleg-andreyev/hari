@@ -5,9 +5,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.1.3",
     "express": "^4.18.2",
+    "mysql": "^2.18.1",
     "openai": "^3.2.1",
-    "azure-openai": "^0.9.4",
-    "sqlite3": "^5.1.6"
+    "azure-openai": "^0.9.4"
   },
   "name": "hari",
   "description": "Improve your HR process",

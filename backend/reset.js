@@ -3,11 +3,21 @@ const client = new Client({
     node: 'http://localhost:9200',
 });
 
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database(`${__dirname}/var/database.db`);
+const mysql = require('mysql');
+const connection = mysql.createConnection({
+    host: process.env.DATABASE_URL,
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE_NAME,
+    port: process.env.DATABASE_PORT,
+    ssl: true,
+    connectTimeout: 30*1000,
+});
+
+connection.connect();
 
 client.indices.delete({
     index: 'resumes'
 });
 
-db.run('DROP TABLE resume');
+connection.query('DROP TABLE resume');
