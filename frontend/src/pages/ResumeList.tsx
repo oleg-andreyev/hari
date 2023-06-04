@@ -1,27 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Alert,
-  Badge,
-  Button,
-  Form,
-  ProgressBar,
-  Spinner,
-  Table,
-} from "react-bootstrap";
+import { Alert, Badge, Button, Form, Spinner } from "react-bootstrap";
 import { TagsInput } from "react-tag-input-component";
 import { useNavigate } from "react-router";
 import { createSearchParams, useSearchParams } from "react-router-dom";
 
 import { useResumeStore } from "../store/useResumeStore";
 import { IResume } from "../interfaces/Resume";
-
 import "./ResumeList.css";
-import { getTotalExperience } from "../utils/getTotalExperience";
 import useLocalStorage from "../hooks/useLocalStorage";
 import {
   EXPERTISE_THRESHOLD_DEFAULT,
   EXPERTISE_THRESHOLD_KEY,
 } from "./Settings";
+import ResumeListTable from "../components/ResumeListTable/ResumeListTable";
 
 export const ResumeList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -146,7 +137,6 @@ export const ResumeList = () => {
         )}
       </h3>
       <div className="mb-2">
-        {/* <Alert variant="light">Might add extra info for specific tag usage, i.e., "experience:8 years"</Alert> */}
         <div className="d-flex mb-2 gap-2 resume-list-inputs">
           <div className="flex-grow-1 resume-list-input-container expertise">
             <div className="resume-list-input-label">Expertise level</div>
@@ -235,49 +225,7 @@ export const ResumeList = () => {
           ) : (
             <Alert variant="light">No filters set.</Alert>
           )}
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>HARI Score</th>
-                <th>Total Exp.</th>
-                <th>Technologies</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...resumes.values()].map((resume, index) => (
-                <React.Fragment key={index}>
-                  <tr
-                    key={resume.resume_id}
-                    onClick={() => navigate(`/resumes/${resume.resume_id}`)}
-                    className="pointer"
-                  >
-                    <td>{index + 1}</td>
-                    <td>{resume.name}</td>
-                    <td>
-                      <ProgressBar
-                        now={Math.max(10, (resume.score / maxScore) * 100)}
-                        label={resume.score}
-                        variant={((score) => {
-                          if (score / maxScore > 0.85) return "success";
-                          if (score / maxScore < 0.35) return "danger";
-                          return "warning";
-                        })(resume.score)}
-                        className="border mt-1"
-                      />
-                    </td>
-                    <td>{getTotalExperience(resume.total_experience, true)}</td>
-                    <td>{resume.technologies.join(", ")}</td>
-                  </tr>
-                  <tr key={`summary-${resume.resume_id}`} className="pointer">
-                    <td></td>
-                    <td colSpan={4}>{resume.summary}</td>
-                  </tr>
-                </React.Fragment>
-              ))}
-            </tbody>
-          </Table>
+          <ResumeListTable resumes={resumes} />
         </>
       )}
     </div>
