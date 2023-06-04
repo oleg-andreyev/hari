@@ -56,7 +56,7 @@ connection.query(`
         technologies     JSON,
         experience       JSON,
         total_experience INT,
-        file             BLOB
+        file             MEDIUMBLOB
     ) ENGINE = InnoDB`, function (err) {
     if (err) {
         throw err;
@@ -90,36 +90,30 @@ app.get('/api/list', cors(corsOptions), function (req, res) {
     // normalize companies
     companies = companies.map((company) => company.trim());
 
-    let query = null;
+    let query = {};
 
     if (tags.length || companies.length) {
-        query = {
-            bool: {},
-        };
-
         if (tags.length) {
-            query['bool']['should'] = [
-                {
+            query['bool'] = {}
+            query['bool']['should'] = [];
+            query['bool']['should'].push({
                     query_string: {
                         query: tags.join(' AND ')
                     }
-                },
-                {
-                    terms: {
-                        technologies: tags
-                    }
+                });
+            query['bool']['should'].push({
+                terms: {
+                    technologies: tags
                 }
-            ];
+            });
         }
 
         if (companies.length) {
-            query['bool']['must'] = [
-                {
-                    terms: {
-                        "experience.company": companies
-                    }
-                }
-            ];
+            query['query_string'] = {
+                "query": `*${companies.join('* OR *')}*`,
+                "default_field": "experience.company",
+                "fuzziness": 2
+            };
         }
     } else {
         query = {

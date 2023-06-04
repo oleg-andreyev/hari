@@ -45,3 +45,28 @@ Content-Type: application/json
   "from": 10,
   "size": 100
 }
+
+###
+
+POST https://elastic:L2ERWkoCwglQQYdm8TJ8@20.254.71.225:9200/resumes_new/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "query": {
+      "query_string": {
+        "query": "*Ubiquiti*",
+        "default_field": "experience.company",
+        "fuzziness": 2
+      }
+    }
+  },
+  "aggs": {
+    "companies": {
+      "terms": {
+        "field": "experience.company"
+      }
+    }
+  },
+  "size": 100
+}

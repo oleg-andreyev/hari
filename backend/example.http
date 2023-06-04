@@ -66,3 +66,13 @@ Content-Type: application/json
 Accept: application/json
 
 ###
+
+GET https://hackcodex-hari-api.azurewebsites.net/api/list?tags=[]
+
+###
+
+GET https://hackcodex-hari-api.azurewebsites.net/api/
+
+###
+
+GET https://hackcodex-hari-api.azurewebsites.net/
