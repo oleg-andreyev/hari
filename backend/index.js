@@ -5,14 +5,11 @@ const port = 3000
 const dotenv = require('dotenv');
 const fs = require("fs");
 const {Client} = require('@elastic/elasticsearch')
-const elasticsearch = new Client({
-    node: 'http://localhost:9200',
-});
-
 const bodyParser = require("body-parser");
+const mysql = require('mysql');
 
 // load configs
-['.env', '.env.local'].forEach((file) => {
+    ['.env', '.env.local'].forEach((file) => {
     if (fs.existsSync(`${__dirname}/${file}`)) {
         dotenv.config({
             path: `${__dirname}/${file}`,
@@ -21,7 +18,18 @@ const bodyParser = require("body-parser");
     }
 })
 
-const mysql = require('mysql');
+const elasticsearch = new Client({
+    node: `https://${process.env.ELASTIC_HOST}`,
+    auth: {
+        username: process.env.ELASTIC_USER,
+        password: process.env.ELASTIC_PASSWORD
+    },
+    tls: {
+        ca: fs.readFileSync('./http_ca.crt'),
+        rejectUnauthorized: false
+    }
+});
+
 const connection = mysql.createConnection({
     host: process.env.DATABASE_URL,
     user: process.env.DATABASE_USER,
@@ -141,10 +149,12 @@ app.post('/upload-resume', cors(corsOptions), function (req, res) {
                     if (err) throw err;
                     content.resume_id = results.insertId;
 
-                    // elasticsearch.index({
-                    //     index: 'resumes',
-                    //     document: content
-                    // }).then(res => console.log(res))
+                    elasticsearch.index({
+                        index: 'resumes',
+                        document: content
+                    }).then(res => {
+                        console.log(res)
+                    })
 
                     res.json(content);
                 }
