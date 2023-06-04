@@ -22,6 +22,7 @@ jobs:
           node-version: '18.x'
 
       - name: npm install, build, and test
+        working-directory: backend
         run: |
           cd backend
           npm install
@@ -31,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: .
+          path: backend
 
   deploy:
     runs-on: ubuntu-latest
