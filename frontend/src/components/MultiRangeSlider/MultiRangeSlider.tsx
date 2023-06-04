@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import PropTypes from "prop-types";
 import "./MultiRangeSlider.css";
 
 const MultiRangeSlider: React.FC<{

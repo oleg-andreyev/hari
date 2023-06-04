@@ -29,7 +29,7 @@ export const Upload = () => {
       // if file uploaded then do FormData request
       let data = new FormData();
       files.forEach((file, i) => {
-        data.append(`resume-${i}`, file, file.name);
+        data.append(`data`, file, file.name);
       });
       await createResumeFiles(data);
     } else {

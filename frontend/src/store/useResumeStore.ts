@@ -137,7 +137,7 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
     } catch (err: any) {
       // TODO: extract from error msg
       set({
-        error: "Could not upload Resume!",
+        error: "Could not uploads Files!",
       });
       console.warn(err);
       return;

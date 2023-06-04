@@ -15,6 +15,7 @@ import { useResumeStore } from "../store/useResumeStore";
 import { IResume } from "../interfaces/Resume";
 
 import "./ResumeList.css";
+import { getTotalExperience } from "../utils/getTotalExperience";
 
 export const ResumeList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -70,6 +71,16 @@ export const ResumeList = () => {
     setCurrentResultCompanies,
   ]);
 
+  const handleSetTags = useCallback(
+    (tags: string[]) => setTags([...tags].map((tag) => tag.trim())),
+    [setTags]
+  );
+  const handleSetCompanies = useCallback(
+    (companiess: string[]) =>
+      setCompanies([...companies].map((company) => company.trim())),
+    [setCompanies]
+  );
+
   useEffect(() => {
     getResumes();
   }, []); // load initial view, thus empty deps list
@@ -97,7 +108,7 @@ export const ResumeList = () => {
             </div>
             <TagsInput
               value={tags}
-              onChange={setTags}
+              onChange={handleSetTags}
               placeHolder="Enter tags"
             />
           </div>
@@ -105,7 +116,7 @@ export const ResumeList = () => {
             <div className="resume-list-input-label">Companies</div>
             <TagsInput
               value={companies}
-              onChange={setCompanies}
+              onChange={handleSetCompanies}
               placeHolder="Filter by past companies"
             />
           </div>
@@ -155,6 +166,7 @@ export const ResumeList = () => {
                 <th>#</th>
                 <th>Name</th>
                 <th>HARI Score</th>
+                <th>Total Exp.</th>
                 <th>Technologies</th>
               </tr>
             </thead>
@@ -177,14 +189,15 @@ export const ResumeList = () => {
                           if (score / maxScore < 0.35) return "danger";
                           return "warning";
                         })(resume.score)}
-                        className="border"
+                        className="border mt-1"
                       />
                     </td>
+                    <td>{getTotalExperience(resume.total_experience, true)}</td>
                     <td>{resume.technologies.join(", ")}</td>
                   </tr>
                   <tr key={`summary-${resume.resume_id}`} className="pointer">
                     <td></td>
-                    <td colSpan={3}>{resume.summary}</td>
+                    <td colSpan={4}>{resume.summary}</td>
                   </tr>
                 </React.Fragment>
               ))}
