@@ -3,12 +3,13 @@
 const pdfjsLib = require("pdfjs-dist");
 
 async function GetTextFromPDF(path) {
+    let strings;
     let doc = await pdfjsLib.getDocument(path).promise;
-    let page1 = await doc.getPage(1);
-    let content = await page1.getTextContent();
-    let strings = content.items.map(function(item) {
-        return item.str;
-    });
+    let number = doc.numPages
+    for (let index = 1; index <= number; index++) {
+      strings += (await (await doc.getPage(index)).getTextContent()).items.map(item => { return item.str});
+
+    }
     return strings.toString();
 }
 
