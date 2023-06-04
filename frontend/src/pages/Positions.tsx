@@ -49,7 +49,7 @@ export const Positions = () => {
               <Card.Subtitle>{position.subtitle}</Card.Subtitle>
               <Card.Text className="d-flex gap-2 mt-2">
                 {position.tags.map((tag, index) => (
-                  <Badge pill bg="secondary" key={`tag-${index}`}>
+                  <Badge pill bg="primary" key={`tag-${index}`}>
                     {tag}
                   </Badge>
                 ))}

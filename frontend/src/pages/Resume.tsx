@@ -1,9 +1,35 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Alert, Badge, Card, Spinner } from "react-bootstrap";
+import { Alert, Badge, Card, ListGroup, Spinner } from "react-bootstrap";
+import { useParams } from "react-router";
 
 import { useResumeStore } from "../store/useResumeStore";
 import { IResume } from "../interfaces/Resume";
-import { useParams } from "react-router";
+import "./Resume.css";
+
+let ExperienceDurationBadge: React.FC<{
+  duration: number;
+}> = ({ duration }) => {
+  let variant = "secondary";
+  if (duration < 4) {
+    variant = "warning";
+  } else if (duration > 29) {
+    variant = "success";
+  } else if (duration > 17) {
+    variant = "primary";
+  }
+  let durationText = `${duration} months`;
+  if (duration > 11) {
+    const halfYears = (duration / 6) | 0;
+    durationText = `${(halfYears / 2) | 0}${halfYears % 2 ? ".5" : ""} year${
+      duration > 23 ? "s" : ""
+    }`;
+  }
+  return (
+    <Badge bg={variant} pill>
+      {durationText}
+    </Badge>
+  );
+};
 
 export const Resume = () => {
   const { id } = useParams<{
@@ -30,6 +56,28 @@ export const Resume = () => {
     getResume();
   }, []); // load initial view, thus empty deps list
 
+  const acronym =
+    resume?.name
+      ?.split(" ")
+      .map((word) => word[0])
+      .join("") ?? "";
+
+  let experience = resume?.total_experience;
+  let totalExperience = [];
+  if (experience) {
+    const years = (experience / 12) | 0;
+    const months = experience % 12;
+    if (years) {
+      totalExperience.push(years, years > 1 ? "years" : "year");
+    }
+    if (months) {
+      if (totalExperience.length > 0) {
+        totalExperience.push("and");
+      }
+      totalExperience.push(months, years > 1 ? "months" : "month");
+    }
+  }
+
   return (
     <div className="d-flex flex-column p-4">
       {error ? (
@@ -40,33 +88,54 @@ export const Resume = () => {
         <p>No resumes found</p>
       ) : (
         <>
-          <h3>
-            Candidate <b>{resume.name}</b>
-          </h3>
-          <Card>
-            <Card.Title>Summary</Card.Title>
+          <div className="d-flex align-items-center mb-4">
+            <div className="candidate-image">{acronym}</div>
+            <div>
+              <h3 className="mb-0">
+                <b>{resume.name}</b>
+              </h3>
+              {!!resume.email && (
+                <span className="text-primary">{resume.email}</span>
+              )}
+              <div className="mt-2">
+                {totalExperience.join(" ")} of experience
+              </div>
+            </div>
+          </div>
+          <div className="d-flex gap-2 flex-wrap mb-4">
+            {resume.technologies.map((tech, index) => (
+              <Badge pill bg="primary" key={index}>
+                {tech}
+              </Badge>
+            ))}
+          </div>
+
+          <h3>Summary</h3>
+          <Card className="mb-4">
             <Card.Body>{resume?.summary}</Card.Body>
           </Card>
-          <Card>
-            <Card.Title>Experience</Card.Title>
-            <Card.Body>
-              {resume.experience.map((experience, index) => (
-                <div key={index}>
-                  {`${experience.position} @ ${experience.company} for ${experience.duration}`}
+
+          <h3>Experience</h3>
+          <ListGroup className="mb-4">
+            {resume.experience.map((experience, index) => (
+              <ListGroup.Item
+                className="d-flex justify-content-between align-items-start"
+                key={index}
+              >
+                <div className="ms-2 me-auto">
+                  <div className="fw-bold">{experience.position}</div>
+                  <span className="text-secondary">at </span>
+                  {experience.company}
+                  {experience.location ? `, ${experience.location}` : ""}
                 </div>
-              ))}
-            </Card.Body>
-          </Card>
-          <Card>
-            <Card.Title>Technologies</Card.Title>
-            <Card.Body>
-              {resume.technologies.map((tech, index) => (
-                <Badge pill bg="secondary" key={index}>
-                  {tech}
-                </Badge>
-              ))}
-            </Card.Body>
-          </Card>
+                {!!experience.duration_in_months && (
+                  <ExperienceDurationBadge
+                    duration={experience.duration_in_months}
+                  />
+                )}
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
         </>
       )}
     </div>
