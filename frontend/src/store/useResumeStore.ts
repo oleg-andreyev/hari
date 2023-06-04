@@ -88,8 +88,9 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
   readResume: async (id: string) => {
     set({ error: "" });
     const { resumes } = get();
-    const resume = resumes.get(id);
-    if (resume) return resume;
+    // const resume = resumes.get(id);
+    // if (resume) return resume;
+    // Always fetch actual "id" resume to get it's CV file blob
     try {
       const resume = (await ApiService.readResume(id)).data;
       if (resume) {

@@ -5,6 +5,11 @@ export interface IResumeExperience {
   duration_in_months: number;
 }
 
+export interface IFile {
+  data: ArrayBufferLike;
+  type: string;
+}
+
 export interface IResume {
   resume_id: string;
   summary: string;
@@ -14,4 +19,5 @@ export interface IResume {
   experience: IResumeExperience[];
   score: number;
   total_experience: number;
+  file?: IFile;
 }

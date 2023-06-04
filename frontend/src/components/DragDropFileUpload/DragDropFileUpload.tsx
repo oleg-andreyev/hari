@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
 import "./DragDropFileUpload.css";
+import FileItem from "./FileItem";
 
 const DragDropFileUpload: React.FC<{
   handleFilesUpload(files: File[]): void;
@@ -70,12 +71,11 @@ const DragDropFileUpload: React.FC<{
       {files.length ? (
         <div className="active-files">
           {[...files].map((file, index) => (
-            <div className="file-preview border" key={index}>
-              <div className="file-remove" onClick={() => removeFile(index)}>
-                &#10005;
-              </div>
-              <div className="file-name">{file.name}</div>
-            </div>
+            <FileItem
+              key={index}
+              name={file.name}
+              removeFile={() => removeFile(index)}
+            />
           ))}
         </div>
       ) : null}

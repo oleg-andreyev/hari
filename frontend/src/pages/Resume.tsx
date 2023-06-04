@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Badge, Card, ListGroup, Spinner } from "react-bootstrap";
 import { useParams } from "react-router";
 
@@ -7,6 +7,7 @@ import { IResume } from "../interfaces/Resume";
 import "./Resume.css";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { SHOW_JOB_HOPPER_DEFAULT, SHOW_JOB_HOPPER_KEY } from "./Settings";
+import FileItem from "../components/DragDropFileUpload/FileItem";
 
 let ExperienceDurationBadge: React.FC<{
   duration: number;
@@ -59,6 +60,15 @@ export const Resume = () => {
   useEffect(() => {
     getResume();
   }, []); // load initial view, thus empty deps list
+
+  const blobUrl = useMemo(() => {
+    if (!resume?.file) return;
+    const { data } = resume.file;
+    const blob = new Blob([
+      new Uint8Array(data, 0, (data as unknown as any[]).length),
+    ]);
+    return window.URL.createObjectURL(blob);
+  }, [resume?.file]);
 
   const acronym =
     resume?.name
@@ -160,6 +170,21 @@ export const Resume = () => {
               </ListGroup.Item>
             ))}
           </ListGroup>
+
+          {blobUrl ? (
+            <>
+              <h3>Resume file</h3>
+              <div>
+                <a
+                  href={blobUrl}
+                  target="_blank"
+                  download={`CV_${resume.name.replace(/\s/g, "_")}.pdf`}
+                >
+                  <FileItem name={`Resume.pdf`} />
+                </a>
+              </div>
+            </>
+          ) : null}
         </>
       )}
     </div>

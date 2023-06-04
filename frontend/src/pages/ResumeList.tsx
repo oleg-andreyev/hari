@@ -76,7 +76,7 @@ export const ResumeList = () => {
     [setTags]
   );
   const handleSetCompanies = useCallback(
-    (companiess: string[]) =>
+    (companies: string[]) =>
       setCompanies([...companies].map((company) => company.trim())),
     [setCompanies]
   );
