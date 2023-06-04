@@ -16,7 +16,10 @@ export interface ICustomersStore extends State {
   // actions
   createResume(data: any): Promise<any>;
   createResumeFiles(data: any): Promise<any>;
-  readResumes(tags: string[]): Promise<IResume[]>;
+  readResumes(data: {
+    tags: string[];
+    companies: string[];
+  }): Promise<IResume[]>;
   readResume(id: string): Promise<IResume | undefined>;
 }
 
@@ -25,7 +28,7 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
   error: "",
   cache: new Map(),
   companies: [],
-  readResumes: async (tags: string[]) => {
+  readResumes: async ({ tags, companies }) => {
     set({ error: "" });
     try {
       // first try for cached results, before making new request
@@ -34,7 +37,11 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
         .sort()
         .map((tag) => tag.toLowerCase())
         .join(";");
-      const cachedOrder = cache.get(tagsId);
+      const companiesId = [...companies]
+        .sort()
+        .map((company) => company.toLowerCase())
+        .join(";");
+      const cachedOrder = cache.get(tagsId + companiesId);
       if (cachedOrder?.length) {
         let allResumesAreAvailable = true;
         const cachedResumes = cachedOrder.map<IResume>((resumeId) => {
@@ -50,8 +57,8 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
         }
       }
 
-      const { rows: fetchedResumes, companies } = (
-        await ApiService.readResumes(tags)
+      const { rows: fetchedResumes, companies: fetchedCompanies } = (
+        await ApiService.readResumes({ tags, companies })
       ).data;
 
       // Start of REMOVE
@@ -70,11 +77,11 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
         resumeOrder.push(resumeId);
       });
       const updatedCache = new Map(cache);
-      updatedCache.set(tagsId, resumeOrder);
+      updatedCache.set(tagsId + companiesId, resumeOrder);
       set({
         resumes: updatedResumesMap,
         cache: updatedCache,
-        companies,
+        companies: fetchedCompanies,
       });
       return fetchedResumes;
     } catch (err: any) {

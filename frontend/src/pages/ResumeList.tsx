@@ -54,7 +54,7 @@ export const ResumeList = () => {
         })
       );
       // should be fail safe, as API error is cathed already, if it fails it should kill the app
-      const data = await readResumes(tags);
+      const data = await readResumes({ tags, companies });
       setResumes(data);
       setMaxScore(Math.max(...data.map(({ score }) => score)));
       setCurrentResultTags(tags);
