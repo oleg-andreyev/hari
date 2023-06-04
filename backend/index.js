@@ -7,8 +7,9 @@ const fs = require("fs");
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database(`${__dirname}/var/database.db`);
 const { Client } = require('@elastic/elasticsearch')
+console.log("Using Elastic: "+process.env.ELASTIC_SEARCH_HOST_PORT)
 const elasticsearch = new Client({
-    node: 'http://localhost:9200',
+    node: process.env.ELASTIC_SEARCH_HOST_PORT,
 });
 
 const bodyParser = require("body-parser");

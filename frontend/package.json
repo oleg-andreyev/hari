@@ -1,7 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "start": "webpack serve --config ./webpack.config.js --mode development --port 3456"
+    "start": "webpack serve --config ./webpack.config.js --mode development --port 3456",
+    "build": "webpack --config ./webpack.config.js --progress"
   },
   "dependencies": {
     "axios": "^1.4.0",
