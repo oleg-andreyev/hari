@@ -72,7 +72,7 @@ const DragDropFileUpload: React.FC<{
           {[...files].map((file, index) => (
             <div className="file-preview border" key={index}>
               <div className="file-remove" onClick={() => removeFile(index)}>
-                X
+                &#10005;
               </div>
               <div className="file-name">{file.name}</div>
             </div>
@@ -94,7 +94,10 @@ const DragDropFileUpload: React.FC<{
       >
         <div>
           <p>Drag and drop Resumes here or</p>
-          <button className="upload-button" onClick={() => inputRef.current?.click()}>
+          <button
+            className="upload-button"
+            onClick={() => inputRef.current?.click()}
+          >
             Upload a file
           </button>
         </div>

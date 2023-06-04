@@ -7,13 +7,11 @@ const MultiRangeSlider: React.FC<{
   max: number;
   thresholds: [number, number]; // TODO update types to match min/max margins
   onChange(thresholds: [number, number]): void;
-}> = (props) => {
-  const { onChange, thresholds } = props;
-  const min = Math.min(), max,
-  const [minVal, setMinVal] = useState(min);
-  const [maxVal, setMaxVal] = useState(max);
-  const minValRef = useRef(min);
-  const maxValRef = useRef(max);
+}> = ({ min, max, onChange, thresholds }) => {
+  const [minVal, setMinVal] = useState(Math.max(min, thresholds[0]));
+  const [maxVal, setMaxVal] = useState(Math.min(max, thresholds[1]));
+  const minValRef = useRef(minVal);
+  const maxValRef = useRef(maxVal);
   const range = useRef<HTMLDivElement>(null);
 
   const getPercent = useCallback(
@@ -44,11 +42,11 @@ const MultiRangeSlider: React.FC<{
 
   // Get min and max values when their state changes
   useEffect(() => {
-    onChange({ min: minVal, max: maxVal });
+    onChange([minVal, maxVal]);
   }, [minVal, maxVal, onChange]);
 
   return (
-    <div className="container">
+    <div className="slider-container">
       <input
         type="range"
         min={min}
@@ -77,9 +75,13 @@ const MultiRangeSlider: React.FC<{
 
       <div className="slider">
         <div className="slider-track" />
+        <div
+          className="slider-track-right"
+          style={{
+            left: `calc(${getPercent(maxVal)}% - 3px)`,
+          }}
+        />
         <div ref={range} className="slider-range" />
-        <div className="slider-left-value">{minVal}</div>
-        <div className="slider-right-value">{maxVal}</div>
       </div>
     </div>
   );

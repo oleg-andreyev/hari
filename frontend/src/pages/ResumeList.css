@@ -6,3 +6,12 @@
     font-size: 14px;
     font-weight: 400;
 }
+
+.resume-list-input-container {
+    position: relative;
+}
+
+.resume-list-input-label {
+    position: absolute;
+    top: -24px;
+}

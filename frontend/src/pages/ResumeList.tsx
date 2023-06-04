@@ -20,15 +20,21 @@ export const ResumeList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [resumes, setResumes] = useState<IResume[]>([]);
   let initialTags = [];
+  let initialCompanies = [];
   if (searchParams.get("tags")) {
     try {
-      initialTags = JSON.parse(searchParams.get("tags") as string);
+      initialTags = JSON.parse(searchParams.get("tags") ?? "[]");
+      initialCompanies = JSON.parse(searchParams.get("companies") ?? "[]");
     } catch (err) {
       // ignore
     }
   }
   const [tags, setTags] = useState<string[]>(initialTags ?? []);
+  const [companies, setCompanies] = useState<string[]>(initialCompanies ?? []);
   const [currentResultTags, setCurrentResultTags] = useState<string[]>([]);
+  const [currentResultCompanies, setCurrentResultCompanies] = useState<
+    string[]
+  >([]);
   const [isFetching, setIsFetching] = useState(false);
   const [maxScore, setMaxScore] = useState(100);
   const { error, readResumes } = useResumeStore((state) => ({
@@ -44,6 +50,7 @@ export const ResumeList = () => {
         createSearchParams({
           title: searchParams.get("title") ?? "",
           tags: JSON.stringify(tags),
+          companies: JSON.stringify(companies),
         })
       );
       // should be fail safe, as API error is cathed already, if it fails it should kill the app
@@ -51,9 +58,17 @@ export const ResumeList = () => {
       setResumes(data);
       setMaxScore(Math.max(...data.map(({ score }) => score)));
       setCurrentResultTags(tags);
+      setCurrentResultCompanies(companies);
       setIsFetching(false);
     }
-  }, [isFetching, tags, setResumes, setIsFetching, setCurrentResultTags]);
+  }, [
+    isFetching,
+    tags,
+    setResumes,
+    setIsFetching,
+    setCurrentResultTags,
+    setCurrentResultCompanies,
+  ]);
 
   useEffect(() => {
     getResumes();
@@ -61,7 +76,7 @@ export const ResumeList = () => {
 
   return (
     <div className="d-flex flex-column p-4">
-      <h3>
+      <h3 className="mb-4">
         Candidates{" "}
         {searchParams.get("title") ? (
           <>
@@ -74,22 +89,28 @@ export const ResumeList = () => {
       </h3>
       <div>
         {/* <Alert variant="light">Might add extra info for specific tag usage, i.e., "experience:8 years"</Alert> */}
-        <div className="d-flex mb-2 mt-4">
-          <div className="flex-grow-1">
+        <div className="d-flex mb-2 mt-4 gap-2">
+          <div className="flex-grow-1 resume-list-input-container">
+            <div className="resume-list-input-label">
+              Tags{" "}
+              <span className="text-muted">(technologies, languages, etc)</span>
+            </div>
             <TagsInput
               value={tags}
               onChange={setTags}
-              placeHolder="Enter tags to search on Resume"
-              // onExisting={} // TODO add notice that it's a duplicate
+              placeHolder="Enter tags"
             />
           </div>
-          <Button
-            variant="outline-success"
-            className="ml-2"
-            onClick={getResumes}
-            disabled={isFetching}
-          >
-            Apply tags
+          <div className="flex-grow-1 resume-list-input-container">
+            <div className="resume-list-input-label">Companies</div>
+            <TagsInput
+              value={companies}
+              onChange={setCompanies}
+              placeHolder="Filter by past companies"
+            />
+          </div>
+          <Button variant="success" onClick={getResumes} disabled={isFetching}>
+            Apply filters
           </Button>
         </div>
       </div>
@@ -101,7 +122,7 @@ export const ResumeList = () => {
         <p>No resumes found</p>
       ) : (
         <>
-          {currentResultTags.length ? (
+          {currentResultTags.length + currentResultCompanies.length ? (
             <Alert variant="light">
               <div>Showing results with tags:</div>
               <div className="d-flex gap-2 flex-wrap">
@@ -109,6 +130,15 @@ export const ResumeList = () => {
                   <Badge
                     bg="primary"
                     key={`tag-${index}`}
+                    className="active-badge"
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+                {currentResultCompanies.map((tag, index) => (
+                  <Badge
+                    bg="primary"
+                    key={`company-${index}`}
                     className="active-badge"
                   >
                     {tag}

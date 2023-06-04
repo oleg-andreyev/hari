@@ -5,6 +5,8 @@ import { useParams } from "react-router";
 import { useResumeStore } from "../store/useResumeStore";
 import { IResume } from "../interfaces/Resume";
 import "./Resume.css";
+import useLocalStorage from "../hooks/useLocalStorage";
+import { SHOW_JOB_HOPPER_DEFAULT, SHOW_JOB_HOPPER_KEY } from "./Settings";
 
 let ExperienceDurationBadge: React.FC<{
   duration: number;
@@ -41,6 +43,8 @@ export const Resume = () => {
     error: state.error,
     readResume: state.readResume,
   }));
+  const { getItem } = useLocalStorage(true);
+  const showJobHopper = getItem(SHOW_JOB_HOPPER_KEY) ?? SHOW_JOB_HOPPER_DEFAULT;
 
   const getResume = useCallback(async () => {
     if (!isFetching) {
@@ -81,12 +85,13 @@ export const Resume = () => {
 
   let lastJobs = resume?.experience.slice(0, 3) ?? [];
   let isJobHopper = lastJobs.length
-    ? lastJobs.reduce(
+    ? showJobHopper &&
+      lastJobs.reduce(
         (acc, { duration_in_months }) => (acc += duration_in_months),
         0
       ) /
         lastJobs.length <=
-      4
+        4
     : false;
 
   return (
