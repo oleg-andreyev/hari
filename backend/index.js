@@ -7,6 +7,8 @@ const fs = require("fs");
 const {Client} = require('@elastic/elasticsearch')
 const bodyParser = require("body-parser");
 const mysql = require('mysql');
+const multer = require('multer');
+const { GetTextFromPDF } = require('./pdfToText');
 
 // load configs
 ['.env', '.env.local'].forEach((file) => {
@@ -202,7 +204,7 @@ app.post('/api/upload-resume', cors(corsOptions), function (req, res) {
                 content.resume_id = results.insertId;
 
                 elasticsearch.index({
-                    index: 'resumes_new',
+                    index: 'resumes',
                     document: content
                 }).then(res => {
                     console.log(res)
@@ -216,8 +218,79 @@ app.post('/api/upload-resume', cors(corsOptions), function (req, res) {
             res.json({
                 error: 'Error' + e.message
             })
+        });
+});
+
+
+
+
+// Set up the storage configuration for multer
+const storage = multer.memoryStorage();
+// Set up the multer middleware with the storage configuration
+const upload = multer({ storage: storage });
+
+app.post('/api/upload-files', upload.array('files'), async function (req, res) {
+
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).send('No files uploaded.');
+    }
+
+    for (const file of req.files) {
+        const fileStream = file.buffer;
+        let text;
+        //extract textfrom PDF
+        try {
+            text = await GetTextFromPDF(fileStream);
+            console.log('PDF text:', text);
+            // Process the extracted text as needed
+        } catch (error) {
+            console.error('Error extracting text from PDF:', error);
+            res.status(500).send('Error extracting text from PDF.');
+        }
+        //send to Gipity
+        const response = fetchSummary(text);
+
+        response.then((content) => {
+            let total_experience = content.experience.reduce(function (a, b) {
+                return a + parseInt(b.duration_in_months);
+            }, 0)
+            content.total_experience = total_experience;
+
+            connection.query(
+                'INSERT INTO resume (raw_data, name, email, summary, technologies, experience, total_experience, file) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                [
+                    req.body.data,
+                    content.name,
+                    content.email,
+                    content.summary,
+                    JSON.stringify(content.technologies),
+                    JSON.stringify(content.experience),
+                    total_experience,
+                    fileStream
+                ],
+                function (err, results, fields) {
+                    if (err) throw err;
+                    content.resume_id = results.insertId;
+
+                    elasticsearch.index({
+                        index: 'resumes',
+                        document: content
+                    }).then(res => {
+                        console.log(res)
+                    })
+
+                    res.json(content);
+                }
+            );
         })
-    ;
+            .catch((e) => {
+                res.json({
+                    error: 'Error' + e.message
+                })
+            });
+    }
+    // Return a response indicating success
+    res.send('Files uploaded successfully.');
 });
 
 app.listen(port, () => {

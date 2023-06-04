@@ -2,21 +2,28 @@
 
 const pdfjsLib = require("pdfjs-dist");
 
-async function GetTextFromPDF(path) {
-    let strings;
-    let doc = await pdfjsLib.getDocument(path).promise;
-    let number = doc.numPages
-    for (let index = 1; index <= number; index++) {
-      strings += (await (await doc.getPage(index)).getTextContent()).items.map(item => { return item.str});
+// async function GetTextFromPDF(path) {
+//     let strings;
+//     let doc = await pdfjsLib.getDocument(path).promise;
+//     let number = doc.numPages
+//     for (let index = 1; index <= number; index++) {
+//       strings += (await (await doc.getPage(index)).getTextContent()).items.map(item => { return item.str});
 
-    }
-    return strings.toString();
+//     }
+//     return strings.toString();
+// }
+
+async function GetTextFromPDF(fileStream) {
+  let strings = '';
+  const doc = await pdfjsLib.getDocument({ data: fileStream }).promise;
+  const number = doc.numPages;
+  for (let index = 1; index <= number; index++) {
+    const page = await doc.getPage(index);
+    const content = await page.getTextContent();
+    const pageText = content.items.map(item => item.str).join(' ');
+    strings += pageText;
+  }
+  return strings;
 }
-
-//test
-const pdf_path = 'C:\\Users\\c5274664\\Desktop\\dataset - Copy\\0001.pdf';
-GetTextFromPDF(pdf_path).then(data => {
-  console.log(data)
-});
 
 module.exports = { GetTextFromPDF }
