@@ -3,9 +3,6 @@ import create, { State } from "zustand";
 import { ApiService } from "../services/ApiService";
 import { IResume } from "../interfaces/Resume";
 
-// REMOVE WHEN USIGN REAL API
-import sampleData from "./sample";
-
 type ResumesMap = Map<IResume["resume_id"], IResume>;
 
 //@ts-ignore "State" is deprecated
@@ -13,6 +10,7 @@ export interface ICustomersStore extends State {
   // data
   resumes: ResumesMap;
   error: string;
+  cache: Map<string, IResume["resume_id"][]>;
   // actions
   createResume(data: any): Promise<any>;
   readResumes(tags: string[]): Promise<IResume[]>;
@@ -22,30 +20,56 @@ export interface ICustomersStore extends State {
 export const useResumeStore = create<ICustomersStore>((set, get) => ({
   resumes: new Map(),
   error: "",
+  cache: new Map(),
   readResumes: async (tags: string[]) => {
     set({ error: "" });
     try {
-      // TODO: cache query params (tags), return cached order if any, else sent request
-      //
-      //
-      const resumes = (await ApiService.readResumes(tags)).data;
+      // first try for cached results, before making new request
+      const { cache, resumes } = get();
+      const tagsId = [...tags]
+        .sort()
+        .map((tag) => tag.toLowerCase())
+        .join(";");
+      const cachedOrder = cache.get(tagsId);
+      if (cachedOrder?.length) {
+        let allResumesAreAvailable = true;
+        const cachedResumes = cachedOrder.map<IResume>((resumeId) => {
+          const foundResume = resumes.get(resumeId.toString());
+          if (!foundResume) {
+            // flag that some resume was not found, thus will need to refetch
+            allResumesAreAvailable = false;
+          }
+          return foundResume as IResume; // hotfix, TODO
+        });
+        if (allResumesAreAvailable) {
+          return cachedResumes;
+        }
+      }
+
+      const fetchedResumes = (await ApiService.readResumes(tags)).data;
 
       // Start of REMOVE
       // add random score, can't reassign, thus need to mutate
-      resumes.forEach((resume) => {
+      fetchedResumes.forEach((resume) => {
         resume.score = Math.floor(Math.random() * 100) / 10;
       });
-      resumes.sort((a, b) => b.score - a.score);
+      fetchedResumes.sort((a, b) => b.score - a.score);
       // End of REMOVE
 
       const updatedResumesMap = new Map();
-      resumes.forEach((resume) => {
-        updatedResumesMap.set(resume.resume_id.toString(), resume);
+      const resumeOrder: IResume["resume_id"][] = [];
+      fetchedResumes.forEach((resume) => {
+        const resumeId = resume.resume_id.toString();
+        updatedResumesMap.set(resumeId, resume);
+        resumeOrder.push(resumeId);
       });
+      const updatedCache = new Map(cache);
+      updatedCache.set(tagsId, resumeOrder);
       set({
         resumes: updatedResumesMap,
+        cache: updatedCache,
       });
-      return resumes;
+      return fetchedResumes;
     } catch (err: any) {
       // TODO: extract from error msg
       set({
