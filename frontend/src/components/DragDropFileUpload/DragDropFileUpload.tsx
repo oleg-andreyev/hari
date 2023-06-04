@@ -85,7 +85,7 @@ const DragDropFileUpload: React.FC<{
         id="input-file-upload"
         multiple={true}
         onChange={handleChange}
-        accept="pdf"
+        accept="application/pdf"
       />
       <label
         id="label-file-upload"
