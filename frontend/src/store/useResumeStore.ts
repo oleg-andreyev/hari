@@ -61,14 +61,6 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
         await ApiService.readResumes({ tags, companies })
       ).data;
 
-      // Start of REMOVE
-      // add random score, can't reassign, thus need to mutate
-      fetchedResumes.forEach((resume) => {
-        resume.score = Math.floor(Math.random() * 100) / 10;
-      });
-      fetchedResumes.sort((a, b) => b.score - a.score);
-      // End of REMOVE
-
       const updatedResumesMap = new Map();
       const resumeOrder: IResume["resume_id"][] = [];
       fetchedResumes.forEach((resume) => {
