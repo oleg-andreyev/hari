@@ -9,7 +9,7 @@ import {
 } from "react-bootstrap";
 import { TagsInput } from "react-tag-input-component";
 import { useNavigate } from "react-router";
-import { useSearchParams } from "react-router-dom";
+import { createSearchParams, useSearchParams } from "react-router-dom";
 
 import { useResumeStore } from "../store/useResumeStore";
 import { IResume } from "../interfaces/Resume";
@@ -40,6 +40,12 @@ export const ResumeList = () => {
   const getResumes = useCallback(async () => {
     if (!isFetching) {
       setIsFetching(true);
+      setSearchParams(
+        createSearchParams({
+          title: searchParams.get("title") ?? "",
+          tags: JSON.stringify(tags),
+        })
+      );
       // should be fail safe, as API error is cathed already, if it fails it should kill the app
       const data = await readResumes(tags);
       setResumes(data);

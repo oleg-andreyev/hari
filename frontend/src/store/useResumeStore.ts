@@ -31,9 +31,6 @@ export const useResumeStore = create<ICustomersStore>((set, get) => ({
       const resumes = (await ApiService.readResumes(tags)).data;
 
       // Start of REMOVE
-      if (!resumes.length) {
-        resumes.push(...sampleData);
-      }
       // add random score, can't reassign, thus need to mutate
       resumes.forEach((resume) => {
         resume.score = Math.floor(Math.random() * 100) / 10;

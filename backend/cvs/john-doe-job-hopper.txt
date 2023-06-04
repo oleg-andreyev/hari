@@ -1,0 +1,6 @@
+Top Skills\n  Back-End Development\nPHP\nJava\Node\nJavascript\nGo\nPython\nSQL\nEnterprise\n  John Doe Senior Software Engineer\n  Latvia\n  Experience\n  
+Amazon\n  Senior Backend Developer\n  April 2018 - June 2018\n  
+Accenture\n  Senior Backend Developer\n  March 2017 - May 2017\n  
+Apple\n  Senior Backend Developer\n  January 2017 - Februry 2017\n  
+Microsoft Latvia\n  Backend Developer\n  January 2010 - January 2016\n  
+Education\n  Rīgas Tehniskā universitāte (Riga Technical University)\n  Master Degree of Engineering Science in Business Informatics, Business Informatics · (January 2009 - July 2012)\n  Rīgas Tehniskā universitāte (Riga Technical University) Bachelor's degree, Computer Systems · (2005 - 2008)

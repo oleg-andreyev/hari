@@ -62,6 +62,7 @@ export const Resume = () => {
       .map((word) => word[0])
       .join("") ?? "";
 
+  // could move to useMemo, but it's not heavy, thus has no actual use to do that
   let experience = resume?.total_experience;
   let totalExperience = [];
   if (experience) {
@@ -77,6 +78,16 @@ export const Resume = () => {
       totalExperience.push(months, years > 1 ? "months" : "month");
     }
   }
+
+  let lastJobs = resume?.experience.slice(0, 3) ?? [];
+  let isJobHopper = lastJobs.length
+    ? lastJobs.reduce(
+        (acc, { duration_in_months }) => (acc += duration_in_months),
+        0
+      ) /
+        lastJobs.length <=
+      4
+    : false;
 
   return (
     <div className="d-flex flex-column p-4">
@@ -103,6 +114,11 @@ export const Resume = () => {
             </div>
           </div>
           <div className="d-flex gap-2 flex-wrap mb-4">
+            {isJobHopper && (
+              <Badge pill bg="danger">
+                Job hopper
+              </Badge>
+            )}
             {resume.technologies.map((tech, index) => (
               <Badge pill bg="primary" key={index}>
                 {tech}
